@@ -1,0 +1,45 @@
+package com.epam.aliebay.constant;
+
+public class OtherConstants {
+    public static final String LANGUAGE_RU = "ru";
+    public static final String LANGUAGE_EN = "en";
+    public static final String REFERER_HEADER = "referer";
+    public static final String SHOPPING_CART_COOCKIE = "cart";
+    public static final int SHOPPING_CART_COOCKIE_AGE = 60*60;
+    public static final String TOTAL_COUNT_JSON = "totalCount";
+    public static final String TOTAL_COST_JSON = "totalCost";
+    public static final String ORDER_STATUS_JSON = "orderStatus";
+    public static final String ID_ORDER_STATUS_JSON = "idOrderStatus";
+    public static final String USER_STATUS_JSON = "userStatus";
+    public static final String PRICE_SORT_PARAMETER = "price";
+    public static final String ID_SORT_PARAMETER ="id";
+    public static final int COUNT_CATEGORIES_LEFT_PANEL_ON_HOME_PAGE = 9;
+    public static final int COUNT_CATEGORIES_RIGHT_PANEL_ON_PRODUCT_PAGE = 5;
+    public static final int COUNT_PRODUCERS_RIGHT_PANEL_ON_PRODUCT_PAGE = 5;
+    public static final int COUNT_PRODUCTS_ON_PRODUCT_PAGE = 9;
+    public static final String CUSTOMER_ROLE = "customer";
+    public static final String ADMIN_ROLE = "admin";
+    public static final String PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE = "data:image/png;base64,";
+    public static final int LENGTH_OF_PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE = 22;
+    public static final String LOGIN_PAGE = "login-page";
+    public static final int ID_ORDER_STATUS_IN_PROCESS = 1;
+    public static final int ID_ORDER_STATUS_CANCELLED = 4;
+    public static final int ID_USER_STATUS_ACTIVE = 1;
+    public static final int ID_USER_STATUS_BANNED = 2;
+    public static final String UPDATE_TAB = "update";
+    public static final String CHANGE_PASSWORD_TAB = "changePassword";
+    public static final int INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA = 1;
+    public static final int LIMIT_LENGTH_OF_PRODUCT_NAME = 45;
+    public static final int LIMIT_LENGTH_OF_CATEGORY_NAME = 30;
+    public static final int LIMIT_LENGTH_OF_PRODUCER_NAME = 30;
+    public static final int LIMIT_LENGTH_OF_PRODUCT_DESCRIPTION = 1500;
+    public static final String CHANGE_PRODUCT_FORM_ACTION = "change-product";
+    public static final String ADD_PRODUCT_FORM_ACTION = "add-product";
+    public static final String CHANGE_PRODUCER_FORM_ACTION = "change-producer";
+    public static final String ADD_PRODUCER_FORM_ACTION = "add-producer";
+    public static final String CHANGE_CATEGORY_FORM_ACTION = "change-category";
+    public static final String ADD_CATEGORY_FORM_ACTION = "add-category";
+    public static final String ERROR_403_TITLE = "error.403.title";
+    public static final String ERROR_403_MESSAGE = "error.403.message";
+    public static final int ID_PARENT_OF_HIGHEST_HIERARCHY_CATEGORY = 0;
+}

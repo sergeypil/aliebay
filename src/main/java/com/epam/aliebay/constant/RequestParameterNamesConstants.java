@@ -1,0 +1,42 @@
+package com.epam.aliebay.constant;
+
+public class RequestParameterNamesConstants {
+    public static final String LANGUAGE_PARAMETER = "lang";
+    public static final String CURRENT_PASSWORD_PARAMETER = "current-password";
+    public static final String NEW_PASSWORD_PARAMETER = "new-password";
+    public static final String CONFIRMED_PASSWORD_PARAMETER = "confirm-password";
+    public static final String NUMBER_OF_PAGE_PARAMETER = "number-of-page";
+    public static final String SORT_PARAMETER = "sort";
+    public static final String SEARCH_PARAMETER = "search";
+    public static final String ID_CATEGORY_PARAMETER = "id-category";
+    public static final String ID_PRODUCER_PARAMETER = "id-producer";
+    public static final String ID_PARAMETER = "id";
+    public static final String USERNAME_OR_EMAIL_PARAMETER = "usernameOrEmail";
+    public static final String PASSWORD_PARAMETER = "password";
+    public static final String USERNAME_PARAMETER = "username";
+    public static final String FIRST_NAME_PARAMETER = "first-name";
+    public static final String LAST_NAME_PARAMETER = "last-name";
+    public static final String PHONE_NUMBER_PARAMETER = "phone-number";
+    public static final String BIRTH_DATE_PARAMETER = "birth-date";
+    public static final String EMAIL_PARAMETER = "email";
+    public static final String CARD_NUMBER_PARAMETER = "card-number";
+    public static final String SECURITY_CODE_PARAMETER = "security-code";
+    public static final String CARD_HOLDER_PARAMETER = "card-holder";
+    public static final String EXPIRATION_DATE_PARAMETER = "date";
+    public static final String ADDRESS_PARAMETER = "address";
+    public static final String ID_PRODUCT_PARAMETER = "idProduct";
+    public static final String COUNT_PARAMETER = "count";
+    public static final String ID_ORDER_PARAMETER = "id_order";
+    public static final String ID_ORDER_STATUS_PARAMETER = "id_order_status";
+    public static final String ID_USER_PARAMETER = "id_user";
+    public static final String ID_USER_STATUS_PARAMETER = "id_user_status";
+    public static final String PARENT_CATEGORY_PARAMETER = "parent-category";
+    public static final String CATEGORY_LANG_ID_PARAMETER = "category-lang-";
+    public static final String IMAGE_PARAMETER = "image";
+    public static final String PRODUCER_NAME_PARAMETER = "producer-name";
+    public static final String PRODUCT_NAME_PARAMETER = "product-name";
+    public static final String DESCRIPTION_PARAMETER = "description";
+    public static final String PRICE_PARAMETER = "price";
+    public static final String CATEGORY_PARAMETER = "category";
+    public static final String PRODUCER_PARAMETER = "producer";
+}
