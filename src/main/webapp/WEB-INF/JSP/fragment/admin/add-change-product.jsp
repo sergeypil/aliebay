@@ -18,8 +18,8 @@
             </h1>
             <div class="register-form">
                 <form action="${action}" method="post" enctype="multipart/form-data">
-                    <div class="col-md-8">
-                        <label><fmt:message key="admin.product.name"/></label>
+                    <div class="col-md-10">
+                        <label><fmt:message key="admin.product.name"/><span class="text-danger"> *</span></label>
                         <input class="form-control" type="text" name="product-name" value="${editedProduct.name}"
                                maxlength="45">
                     </div>
@@ -27,23 +27,23 @@
                         <div class="alert alert-danger"><fmt:message key="product.error.name"/></div>
                     </c:if>
                     <div class="col-md-12">
-                        <label><fmt:message key="admin.product.description"/></label>
+                        <label><fmt:message key="admin.product.description"/><span class="text-danger"> *</span></label>
                         <textarea class="form-control" name="description" cols="100"
                                   rows="10">${editedProduct.description}</textarea>
                     </div>
-                    <c:if test="${isWrongDescription==true}">
+                    <c:if test="${isWrongDescription}">
                         <div class="alert alert-danger"><fmt:message key="product.error.description"/></div>
                     </c:if>
-                    <div class="col-md-8">
-                        <label><fmt:message key="admin.product.price"/></label>
-                        <input class="form-control floatNumberField" type="number" step="0.01" name="price" lang="en-US"
-                               placeholder="0.00" maxlength="6" value="${editedProduct.price}">
+                    <div class="col-md-10" lang="en">
+                        <label><fmt:message key="admin.product.price"/><span class="text-danger"> *</span></label>
+                        <input class="form-control floatNumberField" type="text" name="price" id="input-price"
+                                maxlength="9" value="<fmt:formatNumber value="${editedProduct.price}"/>">
                     </div>
-                    <c:if test="${isWrongPrice==true}">
+                    <c:if test="${isWrongPrice}">
                         <div class="alert alert-danger"><fmt:message key="product.error.price"/></div>
                     </c:if>
-                    <div class="col-md-8">
-                        <label><fmt:message key="category"/></label>
+                    <div class="col-md-10">
+                        <label><fmt:message key="category"/><span class="text-danger"> *</span></label>
                         <select name="category">
                             <c:forEach var="category" items="${leafCategories}">
                                 <option value="${category.id}"
@@ -54,33 +54,35 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-md-8 margin-top-bottom">
+                    <div class="col-md-10 margin-top-bottom">
                         <div>
-                            <label><fmt:message key="producer"/></label>
+                            <label><fmt:message key="producer"/><span class="text-danger"> *</span></label>
                         </div>
                         <select name="producer">
                             <c:forEach var="producer" items="${allProducers}">
                                 <option value="${producer.id}"
+                                        <c:if test="${producer.id==editedProduct.producer.id}">
+                                            selected="selected"
+                                        </c:if>
                                 >${producer.name}</option>
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="col-md-8">
-                        <label><fmt:message key="count"/></label>
-                        <input class="form-control" type="number" name="count" value="${editedProduct.count}"
-                               maxlength="9">
+                    <div class="col-md-10">
+                        <label><fmt:message key="count"/><span class="text-danger"> *</span></label>
+                        <input class="form-control" type="number" name="count" value="${editedProduct.count}">
                     </div>
-                    <c:if test="${isWrongCount==true}">
+                    <c:if test="${isWrongCount}">
                         <div class="alert alert-danger"><fmt:message key="product.error.count"/></div>
                     </c:if>
-                    <div class="col-md-8">
-                        <label for="file"><fmt:message key="image"/></label>
+                    <div class="col-md-10">
+                        <label for="file"><fmt:message key="image"/><span class="text-danger"> *</span></label>
                         <input class="form-control" type="file" name="image" id="file">
                     </div>
-                    <c:if test="${isEmptyImage==true}">
+                    <c:if test="${isEmptyImage}">
                         <div class="alert alert-danger"><fmt:message key="product.error.empty.image"/></div>
                     </c:if>
-                    <c:if test="${isWrongImage==true}">
+                    <c:if test="${isWrongImage}">
                         <div class="alert alert-danger"><fmt:message key="product.error.image"/></div>
                     </c:if>
                     <div class="col-md-12">

@@ -6,6 +6,7 @@ import com.epam.aliebay.dao.Interface.OrderStatusDao;
 import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.entity.Order;
 import com.epam.aliebay.entity.OrderStatus;
+import com.epam.aliebay.exception.OrderNotFoundException;
 import com.epam.aliebay.exception.OrderStatusNotFoundException;
 import com.epam.aliebay.util.RoutingUtils;
 import org.json.JSONObject;
@@ -31,11 +32,11 @@ public class ChangeOrderStatusAction implements Action {
         long idOrder = Long.parseLong(idOrderParam);
         int desiredIdOrderStatus = Integer.parseInt(idOrderStatusParam);
         Order order = orderDao.getOrderById(idOrder, (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).orElseThrow(
-                () -> new OrderStatusNotFoundException("Order with id " + idOrder + "not found"));
+                () -> new OrderNotFoundException("Cannot find order with id = " + idOrder));
         if (order.getStatus().getId() != desiredIdOrderStatus && order.getStatus().getId() != ID_ORDER_STATUS_CANCELLED) {
             OrderStatus orderStatus = orderStatusDao.getOrderStatusById(desiredIdOrderStatus,
                     (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).orElseThrow(
-                    () -> new OrderStatusNotFoundException("Order status with id " + desiredIdOrderStatus + "not found"));
+                    () -> new OrderStatusNotFoundException("Cannot order status with id = " + desiredIdOrderStatus));
             order.setStatus(orderStatus);
             if (desiredIdOrderStatus == ID_ORDER_STATUS_CANCELLED) {
                 orderDao.updateOrderStatusAndReturnProducts(order, order.getId());

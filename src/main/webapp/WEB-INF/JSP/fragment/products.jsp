@@ -44,7 +44,7 @@
                                         </a>
                                     </div>
                                     <div class="product-price">
-                                        <h3>$${product.price}</h3>
+                                        <p>$${product.price}</p>
                                         <a class="btn add-to-cart" href="${hostName}/main/product?id=${product.id}">
                                             <fmt:message key="product.view"/></a>
                                     </div>

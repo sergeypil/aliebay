@@ -69,5 +69,4 @@ public class AttributeConstants {
     public static final String SHOPPING_CART_DESERIALIZATION_DONE = "isShoppingCartDeserializationDone";
     public static final String ERROR_TITLE_ATTRIBUTE = "errorTitle";
     public static final String ERROR_MESSAGE_ATTRIBUTE = "errorMessage";
-
 }

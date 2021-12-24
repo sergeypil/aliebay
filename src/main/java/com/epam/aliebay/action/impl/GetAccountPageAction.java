@@ -33,7 +33,7 @@ public class GetAccountPageAction implements Action {
 
         List<OrderStatus> orderStatuses = orderStatusDao.getAllOrderStatuses((String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE));
         List<OrderStatus> orderStatusesForCustomer = orderStatuses.stream()
-                .filter(el -> el.getId() == ID_ORDER_STATUS_IN_PROCESS || el.getId() == ID_ORDER_STATUS_CANCELLED)
+                .filter(os -> os.getId() == ID_ORDER_STATUS_IN_PROCESS || os.getId() == ID_ORDER_STATUS_CANCELLED)
                 .collect(Collectors.toList());
         req.getSession().setAttribute(ORDER_STATUSES_FOR_CUSTOMER_ATTRIBUTE, orderStatusesForCustomer);
         RoutingUtils.forwardToPage(ACCOUNT_JSP, req, resp);

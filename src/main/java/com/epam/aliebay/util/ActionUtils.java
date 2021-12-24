@@ -84,13 +84,17 @@ public final class ActionUtils {
             req.setAttribute(WRONG_PRICE_ATTRIBUTE, true);
             areAllParametersValid = false;
         } else {
-            editedProduct.setPrice(new BigDecimal(req.getParameter(PRICE_PARAMETER)));
+            String price = req.getParameter(PRICE_PARAMETER);
+            if (price.contains(",")) {
+                price = price.replace(",",".");
+            }
+            editedProduct.setPrice(new BigDecimal(price));
         }
         if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(CATEGORY_PARAMETER))) {
             int idCategory = Integer.parseInt(req.getParameter(CATEGORY_PARAMETER));
             List<Category> categories = (List<Category>) req.getSession().getAttribute(LEAF_CATEGORIES_ATTRIBUTE);
             Category category = categories.stream()
-                    .filter(el -> el.getId() == idCategory)
+                    .filter(cat -> cat.getId() == idCategory)
                     .findAny().orElseThrow(() -> new CategoryNotFoundException("Cannot find category with id = " + idCategory));
             editedProduct.setCategory(category);
         }
@@ -98,7 +102,7 @@ public final class ActionUtils {
             int idProducer = Integer.parseInt(req.getParameter(PRODUCER_PARAMETER));
             List<Producer> producers = (List<Producer>) req.getSession().getAttribute(ALL_PRODUCERS_ATTRIBUTE);
             Producer producer = producers.stream()
-                    .filter(el -> el.getId() == idProducer)
+                    .filter(pr -> pr.getId() == idProducer)
                     .findAny().orElseThrow(() -> new ProducerNotFoundException("Cannot find producer with id = " + idProducer));
             editedProduct.setProducer(producer);
         }
@@ -108,7 +112,7 @@ public final class ActionUtils {
         } else {
             editedProduct.setCount(Integer.parseInt(req.getParameter(COUNT_PARAMETER)));
         }
-        if (ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
+        if (ValidationUtils.isRequestContainsMultipartContent(req) && ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
             if (ValidationUtils.isValidImage(req.getPart(IMAGE_PARAMETER))) {
                 String image = transformPartToString(req);
                 editedProduct.setImage(image);
@@ -139,9 +143,9 @@ public final class ActionUtils {
     public static boolean validateRequestFromCategoryForm(HttpServletRequest req, Map<Integer, Category> langToCategory,
                                                           Map<Integer, Boolean> langToWrongName)
             throws IOException, ServletException {
-        List<Language> languages = (List<Language>) req.getServletContext().getAttribute(APP_LANGUAGES_ATTRIBUTE);
+        List<Language> languages = (List<Language>) req.getSession().getAttribute(APP_LANGUAGES_ATTRIBUTE);
         AtomicBoolean areAllParametersValid = new AtomicBoolean(true);
-        if (ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
+        if (ValidationUtils.isRequestContainsMultipartContent(req) && ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
             if (ValidationUtils.isValidImage(req.getPart(IMAGE_PARAMETER))) {
                 String image = transformPartToString(req);
                 langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).setImage(image);
@@ -155,17 +159,19 @@ public final class ActionUtils {
                 areAllParametersValid.set(false);
             }
         }
-        int idParentCategory = Integer.parseInt(req.getParameter(PARENT_CATEGORY_PARAMETER));
-        langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).setParentCategoryId(idParentCategory);
+        if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(PARENT_CATEGORY_PARAMETER))) {
+            int idParentCategory = Integer.parseInt(req.getParameter(PARENT_CATEGORY_PARAMETER));
+            langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).setParentCategoryId(idParentCategory);
+        }
         languages.stream()
-                .forEach(el -> {
-                    if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(CATEGORY_LANG_ID_PARAMETER + el.getId())) ||
-                            !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(CATEGORY_LANG_ID_PARAMETER + el.getId()),
+                .forEach(lang -> {
+                    if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId())) ||
+                            !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId()),
                                     LIMIT_LENGTH_OF_CATEGORY_NAME)) {
-                        langToWrongName.put(el.getId(), true);
+                        langToWrongName.put(lang.getId(), true);
                         areAllParametersValid.set(false);
                     } else {
-                        langToCategory.get(el.getId()).setName(req.getParameter(CATEGORY_LANG_ID_PARAMETER + el.getId()));
+                        langToCategory.get(lang.getId()).setName(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId()));
                     }
                 });
 
@@ -215,4 +221,12 @@ public final class ActionUtils {
                         .append("|"));
         return String.valueOf(coockieCart);
     }
+
+    public static List<Producer> getProducersByProducts(List<Product> products) {
+        return products.stream()
+                .map(Product::getProducer)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
 }

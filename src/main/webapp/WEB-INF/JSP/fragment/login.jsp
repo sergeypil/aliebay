@@ -8,14 +8,14 @@
             <h1 class="d-flex justify-content-center page-header"><fmt:message key="header.login"/></h1>
             <div class="login-form ">
                 <form action="login-user" method="post">
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <label><fmt:message key="login.email"/></label>
                         <input class="form-control" type="text" name="usernameOrEmail" maxlength="45">
                     </div>
                     <c:if test="${isWrongLogin}">
                         <div class="alert alert-danger"><fmt:message key="login.error.login"/></div>
                     </c:if>
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <label><fmt:message key="login.password"/></label>
                         <input class="form-control" type="password" name="password"
                                maxlength="45">

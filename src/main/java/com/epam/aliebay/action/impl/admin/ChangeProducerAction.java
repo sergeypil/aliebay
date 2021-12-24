@@ -27,7 +27,10 @@ public class ChangeProducerAction implements Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (AccessValidator.isAccessPermitted(req)) {
+        if (req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE) == null) {
+            RoutingUtils.sendError(HttpServletResponse.SC_UNAUTHORIZED, ERROR_401_TITLE, ERROR_401_MESSAGE, req, resp);
+        }
+        else if (AccessValidator.isAccessPermitted(req)) {
             Producer editedProducer = (Producer) req.getSession().getAttribute(EDITED_PRODUCER_ATTRIBUTE);
             boolean areAllParametersValid = ActionUtils.validateRequestFromProducerForm(req, editedProducer);
             if (!areAllParametersValid) {
@@ -42,10 +45,7 @@ public class ChangeProducerAction implements Action {
                 resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) + GET_ADMIN_PRODUCERS_PAGE_ACTION);
             }
         } else {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            req.setAttribute(ERROR_TITLE_ATTRIBUTE, ERROR_403_TITLE);
-            req.setAttribute(ERROR_MESSAGE_ATTRIBUTE, ERROR_403_MESSAGE);
-            RoutingUtils.forwardToPage(ERROR_JSP, req, resp);
+            RoutingUtils.sendError(HttpServletResponse.SC_FORBIDDEN, ERROR_403_TITLE, ERROR_403_MESSAGE, req, resp);
         }
     }
 }

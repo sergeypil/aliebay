@@ -6,6 +6,7 @@ import com.epam.aliebay.dao.Interface.UserDao;
 import com.epam.aliebay.dao.Interface.UserStatusDao;
 import com.epam.aliebay.entity.User;
 import com.epam.aliebay.entity.UserStatus;
+import com.epam.aliebay.exception.UserNotFoundException;
 import com.epam.aliebay.util.RoutingUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -29,9 +30,12 @@ public class ChangeUserStatusAction implements Action {
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String idUser = req.getParameter(ID_USER_PARAMETER);
         String idUserStatus = req.getParameter(ID_USER_STATUS_PARAMETER);
-        User user = userDao.getUserById(Integer.parseInt(idUser), (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).get();
+        User user = userDao.getUserById(Integer.parseInt(idUser), (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE))
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with id = " + idUser));
 
-        UserStatus userStatus = userStatusDao.getUserStatusById(Integer.parseInt(idUserStatus), (String) req.getSession().getAttribute("currentLanguage")).get();
+        UserStatus userStatus = userStatusDao.getUserStatusById(Integer.parseInt(idUserStatus), (String) req.getSession()
+                .getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).orElseThrow(
+                () -> new UserNotFoundException("Cannot find user status with id = " + idUserStatus));
         user.setStatus(userStatus);
         userDao.updateUser(user, user.getId());
         LOGGER.info("User " + ((User) req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE)).getUsername()

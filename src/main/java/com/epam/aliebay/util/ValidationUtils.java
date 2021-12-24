@@ -1,5 +1,6 @@
 package com.epam.aliebay.util;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,14 +14,16 @@ public class ValidationUtils {
     private static  final String SECURITY_CODE_REGEX = "^\\d{3,4}$";
     private static  final String CARD_HOLDER_NAME_REGEX = "^[A-Za-z-]+\\s+[A-Za-z-]+$";
     private static final String PHONE_NUMBER_REGEX = "^[0-9\\+]{1,}[0-9\\-]{3,15}$";
-    private static final String INTEGER_REGEX = "^\\d+$";
-    private static final String PRICE_REGEX = "^[0-9]{0,6}[,.]{1}[0-9]{0,2}";
+    private static final String INTEGER_REGEX = "^[0-9]{1,9}$";
+    private static final String PRICE_REGEX = "^[0-9]{0,6}[,.]?[0-9]{0,2}$";
     private static final int MIN_IMAGE_SIZE = 0;
     private static final int MAX_IMAGE_SIZE = 1024 * 1024 * 5;
     private static final String JPEG_CONTENT_TYPE = "image/jpeg";
     private static final String JPG_CONTENT_TYPE = "image/jpg";
     private static final String PNG_CONTENT_TYPE = "image/png";
     private static final int MAX_ADDRESS_LENGTH = 300;
+    private static final String MIN_PRICE = "0.01";
+    private static final String MAX_PRICE = "999999.99";
 
 
     public static boolean isParameterNullOrEmpty(String param) {
@@ -79,8 +82,14 @@ public class ValidationUtils {
     }
 
     public static boolean isValidPrice(String price) {
-        return !isParameterNullOrEmpty(price) && price.matches(PRICE_REGEX) &&
-                new BigDecimal(price).compareTo(new BigDecimal(0.00)) > 0;
+        if (!isParameterNullOrEmpty(price) && price.matches(PRICE_REGEX)) {
+            if (price.contains(",")) {
+                price = price.replace(",",".");
+            }
+        }
+        else return false;
+        return new BigDecimal(price).compareTo(new BigDecimal(MIN_PRICE)) >= 0 &&
+                new BigDecimal(price).compareTo(new BigDecimal(MAX_PRICE)) <= 0;
     }
 
     public static boolean isValidInteger(String param) {
@@ -100,5 +109,9 @@ public class ValidationUtils {
 
     public static boolean isImageLoaded(Part filePart) {
         return filePart.getSize() > 0;
+    }
+
+    public static boolean isRequestContainsMultipartContent(HttpServletRequest req) {
+        return req.getContentType() != null && req.getContentType().toLowerCase().contains("multipart/form-data");
     }
 }

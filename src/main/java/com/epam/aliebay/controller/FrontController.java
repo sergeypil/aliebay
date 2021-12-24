@@ -5,6 +5,7 @@ import com.epam.aliebay.action.ActionFactory;
 import com.epam.aliebay.constant.AttributeConstants;
 import com.epam.aliebay.dao.connectionpool.ConnectionPool;
 import com.epam.aliebay.exception.OrderNotFoundException;
+import com.epam.aliebay.exception.ResourceNotFoundException;
 import com.epam.aliebay.util.RoutingUtils;
 import org.apache.log4j.Logger;
 
@@ -35,7 +36,11 @@ public class FrontController extends HttpServlet {
             String pathInfo = req.getServletPath() + req.getPathInfo();
             Action action = ActionFactory.getInstance().getCommand(pathInfo);
             action.execute(req, resp);
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
+            logger.error("Cannot execute request, resource not found", e);
+            throw e;
+        }
+        catch (Throwable e) {
             logger.error("Cannot execute request", e);
             throw e;
         }

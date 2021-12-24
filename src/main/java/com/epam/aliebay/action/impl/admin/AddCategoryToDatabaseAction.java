@@ -31,15 +31,18 @@ public class AddCategoryToDatabaseAction implements Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (AccessValidator.isAccessPermitted(req)) {
-            List<Language> languages = (List<Language>) req.getServletContext().getAttribute(APP_LANGUAGES_ATTRIBUTE);
+        if (req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE) == null) {
+            RoutingUtils.sendError(HttpServletResponse.SC_UNAUTHORIZED, ERROR_401_TITLE, ERROR_401_MESSAGE, req, resp);
+        }
+        else if (AccessValidator.isAccessPermitted(req)) {
+            List<Language> languages = (List<Language>) req.getSession().getAttribute(APP_LANGUAGES_ATTRIBUTE);
             Map<Integer, Category> langToCategory;
             Map<Integer, Boolean> langToWrongName = new HashMap<>();
             if (req.getSession().getAttribute(LANG_TO_CATEGORY_ATTRIBUTE) == null) {
                 langToCategory = new HashMap<>();
-                languages.forEach(el -> {
+                languages.forEach(lang -> {
                     Category category = new Category();
-                    langToCategory.put(el.getId(), category);
+                    langToCategory.put(lang.getId(), category);
                 });
             } else {
                 langToCategory = (Map<Integer, Category>) req.getSession().getAttribute(LANG_TO_CATEGORY_ATTRIBUTE);
@@ -58,10 +61,7 @@ public class AddCategoryToDatabaseAction implements Action {
             }
         }
         else {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            req.setAttribute(ERROR_TITLE_ATTRIBUTE, ERROR_403_TITLE);
-            req.setAttribute(ERROR_MESSAGE_ATTRIBUTE,ERROR_403_MESSAGE);
-            RoutingUtils.forwardToPage(ERROR_JSP, req, resp);
+            RoutingUtils.sendError(HttpServletResponse.SC_FORBIDDEN, ERROR_403_TITLE, ERROR_403_MESSAGE, req, resp);
         }
     }
 }

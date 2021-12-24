@@ -153,7 +153,7 @@
                                            value="${currentUser.username}" maxlength="45">
                                 </div>
                                 <c:if test="${isWrongUsername}">
-                                    <div class="alert alert-danger"><fmt:message key="register.error.login"/></div>
+                                    <div class="alert alert-danger"><fmt:message key="register.error.username"/></div>
                                 </c:if>
                                 <div class="col-md-8">
                                     <label><fmt:message key="register.date"/></label>
@@ -192,23 +192,22 @@
                             </c:if>"
                              id="account-tab" role="tabpanel" aria-labelledby="account-nav">
                             <h4><fmt:message key="account.change.password"/></h4>
-                            <div class="row">
                                 <form action="${hostName}/main/change-password" method="post">
-                                    <div class="col-md-12">
+                                    <div class="col-md-8">
                                         <label><fmt:message key="account.current.password"/></label>
                                         <input class="form-control" type="password" name="current-password">
                                     </div>
                                     <c:if test="${isWrongCurrentPassword}">
                                         <div class="alert alert-danger"><fmt:message key="account.error.current.password"/> </div>
                                     </c:if>
-                                    <div class="col-md-12">
+                                    <div class="col-md-8">
                                         <label><fmt:message key="account.new.password"/></label>
                                         <input class="form-control" type="password" name="new-password">
                                     </div>
                                     <c:if test="${isWrongPassword}">
                                         <div class="alert alert-danger"><fmt:message key="register.error.password"/> </div>
                                     </c:if>
-                                    <div class="col-md-12">
+                                    <div class="col-md-8">
                                         <label><fmt:message key="register.confirm"/></label>
                                         <input class="form-control" type="password" name="confirm-password">
                                     </div>
@@ -220,7 +219,6 @@
                                         <button class="btn"><a href="${hostName}/main/account"><fmt:message key="cancel"/></a></button>
                                     </div>
                                 </form>
-                            </div>
                         </div>
                     </div>
                 </div>

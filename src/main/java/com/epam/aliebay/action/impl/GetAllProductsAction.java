@@ -3,7 +3,10 @@ package com.epam.aliebay.action.impl;
 import com.epam.aliebay.action.Action;
 import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.dao.Interface.ProductDao;
+import com.epam.aliebay.entity.Producer;
 import com.epam.aliebay.entity.Product;
+import com.epam.aliebay.util.ActionUtils;
+import com.epam.aliebay.util.AppUtils;
 import com.epam.aliebay.util.RoutingUtils;
 import com.epam.aliebay.util.ValidationUtils;
 
@@ -40,47 +43,43 @@ public class GetAllProductsAction implements Action {
         if (!ValidationUtils.isParameterNullOrEmpty(searchParam)) {
             if (!ValidationUtils.isParameterNullOrEmpty(sortParam) && sortParam.equals(PRICE_SORT_PARAMETER)) {
                 products = productDao.getProductsWithOffsetLimitOrderSearch(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, sortParam, searchParam);
-                req.setAttribute(SEARCH_PARAMETER_ATTRIBUTE, searchParam);
                 req.setAttribute(SORT_PARAM_ATTRIBUTE, sortParam);
-                totalCountOfProducts = productDao.getCountOfProductsWithSearch(searchParam);
+
             } else {
                 products = productDao.getProductsWithOffsetLimitOrderSearch(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, ID_SORT_PARAMETER, searchParam);
-                req.setAttribute(SEARCH_PARAMETER_ATTRIBUTE, searchParam);
-                totalCountOfProducts = productDao.getCountOfProductsWithSearch(searchParam);
             }
+            req.setAttribute(SEARCH_PARAMETER_ATTRIBUTE, searchParam);
+            totalCountOfProducts = productDao.getCountOfProductsWithSearch(searchParam);
         } else if (!ValidationUtils.isParameterNullOrEmpty(idCategoryParam)) {
             int idCategory = Integer.parseInt(idCategoryParam);
             if (!ValidationUtils.isParameterNullOrEmpty(sortParam) && sortParam.equals(PRICE_SORT_PARAMETER)) {
                 products = productDao.getProductsByCategoryWithOffsetLimitOrder(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, sortParam, idCategory);
-                req.setAttribute(ID_CATEGORY_PARAMETER_ATTRIBUTE, idCategoryParam);
                 req.setAttribute(SORT_PARAM_ATTRIBUTE, sortParam);
-                totalCountOfProducts = productDao.getCountOfProductsByCategory(idCategory);
             } else {
                 products = productDao.getProductsByCategoryWithOffsetLimitOrder(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, ID_SORT_PARAMETER, idCategory);
-                req.setAttribute(ID_CATEGORY_PARAMETER_ATTRIBUTE, idCategoryParam);
-                totalCountOfProducts = productDao.getCountOfProductsByCategory(idCategory);
             }
+            req.setAttribute(ID_CATEGORY_PARAMETER_ATTRIBUTE, idCategoryParam);
+            totalCountOfProducts = productDao.getCountOfProductsByCategory(idCategory);
+            List<Producer> producers = ActionUtils.getProducersByProducts(products);
+            AppUtils.setProducersToAttributeAsidePanel(req, producers);
         } else if (!ValidationUtils.isParameterNullOrEmpty(idProducerParam)) {
             int idProducer = Integer.parseInt(idProducerParam);
             if (!ValidationUtils.isParameterNullOrEmpty(sortParam) && sortParam.equals(PRICE_SORT_PARAMETER)) {
                 products = productDao.getProductsByProducerWithOffsetLimitOrder(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, sortParam, idProducer);
-                req.setAttribute(ID_PRODUCER_PARAMETER_ATTRIBUTE, idProducerParam);
                 req.setAttribute(SORT_PARAM_ATTRIBUTE, sortParam);
-                totalCountOfProducts = productDao.getCountOfProductsByProducer(idProducer);
             } else {
                 products = productDao.getProductsByProducerWithOffsetLimitOrder(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, ID_SORT_PARAMETER, idProducer);
-                req.setAttribute(ID_PRODUCER_PARAMETER_ATTRIBUTE, idProducerParam);
-                totalCountOfProducts = productDao.getCountOfProductsByProducer(idProducer);
             }
+            req.setAttribute(ID_PRODUCER_PARAMETER_ATTRIBUTE, idProducerParam);
+            totalCountOfProducts = productDao.getCountOfProductsByProducer(idProducer);
         } else {
             if (!ValidationUtils.isParameterNullOrEmpty(sortParam) && sortParam.equals(PRICE_SORT_PARAMETER)) {
                 products = productDao.getProductsWithOffsetLimitOrder(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE, PRICE_SORT_PARAMETER);
                 req.setAttribute(SORT_PARAM_ATTRIBUTE, sortParam);
-                totalCountOfProducts = productDao.getCountOfProducts();
             } else {
                 products = productDao.getProductsWithOffsetLimit(offset, COUNT_PRODUCTS_ON_PRODUCT_PAGE);
-                totalCountOfProducts = productDao.getCountOfProducts();
             }
+            totalCountOfProducts = productDao.getCountOfProducts();
         }
         int countOfPages = (int) Math.ceil((double) totalCountOfProducts / COUNT_PRODUCTS_ON_PRODUCT_PAGE);
         req.setAttribute(COUNT_OF_PAGES_ATTRIBUTE, countOfPages);

@@ -19,7 +19,7 @@
             <div class="register-form">
                 <form action="${action}" method="post" enctype="multipart/form-data">
                     <div class="col-md-10">
-                        <label for="file"><fmt:message key="image"/></label>
+                        <label for="file"><fmt:message key="image"/><span class="text-danger"> *</span></label>
                         <input class="form-control" type="file" name="image" id="file">
                     </div>
                     <c:if test="${isEmptyImage}">
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-md-8">
                         <c:forEach var="language" items="${appLanguages}">
-                            <label><fmt:message key="admin.add.category.name"/> ${language.name}</label>
+                            <label><fmt:message key="admin.add.category.name"/> ${language.name}<span class="text-danger"> *</span></label>
                             <input class="form-control" type="text" name="category-lang-${language.id}"
                             <c:forEach var="entry" items="${langToCategory}">
                             <c:if test="${language.id==entry.key}">

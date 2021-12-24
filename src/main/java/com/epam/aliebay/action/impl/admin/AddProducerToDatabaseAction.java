@@ -28,7 +28,10 @@ public class AddProducerToDatabaseAction implements Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (AccessValidator.isAccessPermitted(req)) {
+        if (req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE) == null) {
+            RoutingUtils.sendError(HttpServletResponse.SC_UNAUTHORIZED, ERROR_401_TITLE, ERROR_401_MESSAGE, req, resp);
+        }
+        else if (AccessValidator.isAccessPermitted(req)) {
             Producer editedProducer;
             if (req.getSession().getAttribute(EDITED_PRODUCER_ATTRIBUTE) == null) {
                 editedProducer = new Producer();
@@ -38,7 +41,7 @@ public class AddProducerToDatabaseAction implements Action {
             boolean areAllParametersValid = ActionUtils.validateRequestFromProducerForm(req, editedProducer);
             if (!areAllParametersValid) {
                 req.getSession().setAttribute(EDITED_PRODUCER_ATTRIBUTE, editedProducer);
-                req.setAttribute(ACTION_ATTRIBUTE, CHANGE_PRODUCER_FORM_ACTION);
+                req.setAttribute(ACTION_ATTRIBUTE, ADD_PRODUCER_FORM_ACTION);
                 RoutingUtils.forwardToPage(ADD_CHANGE_PRODUCER_JSP, req, resp);
             } else {
                 req.getSession().removeAttribute(EDITED_PRODUCER_ATTRIBUTE);
@@ -48,10 +51,7 @@ public class AddProducerToDatabaseAction implements Action {
                 resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) + GET_ADMIN_PRODUCERS_PAGE_ACTION);
             }
         } else {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            req.setAttribute(ERROR_TITLE_ATTRIBUTE, ERROR_403_TITLE);
-            req.setAttribute(ERROR_MESSAGE_ATTRIBUTE, ERROR_403_MESSAGE);
-            RoutingUtils.forwardToPage(ERROR_JSP, req, resp);
+            RoutingUtils.sendError(HttpServletResponse.SC_FORBIDDEN, ERROR_403_TITLE, ERROR_403_MESSAGE, req, resp);
         }
     }
 }

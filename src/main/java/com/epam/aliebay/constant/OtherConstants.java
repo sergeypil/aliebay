@@ -41,5 +41,7 @@ public class OtherConstants {
     public static final String ADD_CATEGORY_FORM_ACTION = "add-category";
     public static final String ERROR_403_TITLE = "error.403.title";
     public static final String ERROR_403_MESSAGE = "error.403.message";
+    public static final String ERROR_401_TITLE = "error.401.title";
+    public static final String ERROR_401_MESSAGE = "error.401.message";
     public static final int ID_PARENT_OF_HIGHEST_HIERARCHY_CATEGORY = 0;
 }

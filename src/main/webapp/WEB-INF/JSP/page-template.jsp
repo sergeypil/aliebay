@@ -5,8 +5,7 @@
 <head>
 	<title>AlieBay - online store</title>
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<meta content="eCommerce HTML Template Free Download" name="keywords">
-	<meta content="eCommerce HTML Template Free Download" name="description">
+	<meta content="Pet project online-shop AlieBay" name="description">
 
 	<!-- Favicon -->
 	<link href="<c:url value="/media/favicon.png"/>" rel="icon">

@@ -24,7 +24,10 @@ public class GetChangeProducerPageAction implements Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (AccessValidator.isAccessPermitted(req)) {
+        if (req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE) == null) {
+            RoutingUtils.sendError(HttpServletResponse.SC_UNAUTHORIZED, ERROR_401_TITLE, ERROR_401_MESSAGE, req, resp);
+        }
+        else if (AccessValidator.isAccessPermitted(req)) {
             int id = Integer.parseInt(req.getParameter(ID_PARAMETER));
             Producer producer = producerDao.getProducerById(id).orElseThrow(
                     () -> new ProducerNotFoundException("Cannot find producer with id = " + id));
@@ -32,10 +35,7 @@ public class GetChangeProducerPageAction implements Action {
             req.setAttribute(ACTION_ATTRIBUTE, CHANGE_PRODUCER_FORM_ACTION);
             RoutingUtils.forwardToPage(ADD_CHANGE_PRODUCER_JSP, req, resp);
         } else {
-            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            req.setAttribute(ERROR_TITLE_ATTRIBUTE, ERROR_403_TITLE);
-            req.setAttribute(ERROR_MESSAGE_ATTRIBUTE, ERROR_403_MESSAGE);
-            RoutingUtils.forwardToPage(ERROR_JSP, req, resp);
+            RoutingUtils.sendError(HttpServletResponse.SC_FORBIDDEN, ERROR_403_TITLE, ERROR_403_MESSAGE, req, resp);
         }
     }
 }

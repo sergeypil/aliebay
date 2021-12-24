@@ -83,6 +83,10 @@
     <location>/WEB-INF/JSP/error/error-500.jsp</location>
   </error-page>
   <error-page>
+    <exception-type>com.epam.aliebay.exception.ResourceNotFoundException</exception-type>
+    <location>/WEB-INF/JSP/error/error-404.jsp</location>
+  </error-page>
+  <error-page>
     <exception-type>java.lang.Throwable</exception-type>
     <location>/WEB-INF/JSP/error/error-500.jsp</location>
   </error-page>
