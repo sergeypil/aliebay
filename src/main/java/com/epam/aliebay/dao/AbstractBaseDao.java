@@ -4,8 +4,6 @@ import com.epam.aliebay.dao.connectionpool.ConnectionPool;
 import com.epam.aliebay.exception.DaoException;
 import org.apache.log4j.Logger;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.function.Consumer;

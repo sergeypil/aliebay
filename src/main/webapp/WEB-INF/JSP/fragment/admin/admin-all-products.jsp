@@ -1,8 +1,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent">
     <div class="col-md-12">
         <h1 class="d-flex justify-content-center page-header"><fmt:message key="header.products"/></h1>
@@ -21,7 +21,7 @@
                     <th><fmt:message key="actions"/></th>
                 </thead>
                 <tbody>
-                <c:forEach var="product" items="${allProducts}">
+                <c:forEach var="product" items="${requestScope.allProducts}">
                     <tr>
                         <td>${product.id}</td>
                         <td>${product.name}</td>
@@ -37,16 +37,16 @@
                         <td>${product.count}</td>
                         <td>
                             <div>
-                            <a href="${hostName}/main/change-product-page?id=${product.id}">
-                                <i class="fa fa-edit"></i>
-                                <fmt:message key="admin.edit"/>
-                            </a>
+                                <a href="${requestScope.hostName}/main/admin/change-product-page?id=${product.id}">
+                                    <i class="fa fa-edit"></i>
+                                    <fmt:message key="admin.edit"/>
+                                </a>
                             </div>
                             <div>
-                            <a href="${hostName}/main/remove-product?id=${product.id}">
-                                <i class="fa fa-times"></i>
-                                <fmt:message key="admin.remove"/>
-                            </a>
+                                <a href="${requestScope.hostName}/main/admin/remove-product?id=${product.id}">
+                                    <i class="fa fa-times"></i>
+                                    <fmt:message key="admin.remove"/>
+                                </a>
                             </div>
                         </td>
                     </tr>

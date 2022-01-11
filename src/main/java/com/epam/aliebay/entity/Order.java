@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Order {
     private long id;
-    private int idUser;
+    private int userId;
     private List<OrderItem> items;
     private Timestamp created;
     private OrderStatus status;
@@ -19,31 +19,6 @@ public class Order {
         this.items = new ArrayList<>();
     }
 
-    public Order(int idUser) {
-        this.idUser = idUser;
-
-    }
-
-    public Order(int idUser, Timestamp created) {
-        this.idUser = idUser;
-        this.items = new ArrayList<>();
-        this.created = created;
-    }
-
-    public Order(long id, int idUser, Timestamp created) {
-        this.id = id;
-        this.idUser = idUser;
-        this.items = new ArrayList<>();
-        this.created = created;
-    }
-
-    public Order(long id, int idUser, List<OrderItem> items, Timestamp created) {
-        this.id = id;
-        this.idUser = idUser;
-        this.items = items;
-        this.created = created;
-    }
-
     public long getId() {
         return id;
     }
@@ -52,12 +27,12 @@ public class Order {
         this.id = id;
     }
 
-    public int getIdUser() {
-        return idUser;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public List<OrderItem> getItems() {
@@ -104,7 +79,7 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", idUser=" + idUser +
+                ", userId=" + userId +
                 ", items=" + items +
                 ", created=" + created +
                 ", status=" + status +

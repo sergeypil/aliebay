@@ -17,7 +17,7 @@ public class GetShoppingCartAction implements Action {
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        ShoppingCart shoppingCart = SessionUtils.getCurrentShoppingCart(req);;
+        ShoppingCart shoppingCart = SessionUtils.getCurrentShoppingCart(req);
         if (shoppingCart == null) {
             shoppingCart = new ShoppingCart();
             SessionUtils.setCurrentShoppingCart(req, shoppingCart);

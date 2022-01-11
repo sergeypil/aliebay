@@ -1,11 +1,11 @@
 package com.epam.aliebay.constant;
 
 public class OtherConstants {
-    public static final String LANGUAGE_RU = "ru";
     public static final String LANGUAGE_EN = "en";
     public static final String REFERER_HEADER = "referer";
     public static final String SHOPPING_CART_COOCKIE = "cart";
-    public static final int SHOPPING_CART_COOCKIE_AGE = 60*60;
+    public static final int SHOPPING_CART_COOCKIE_AGE = 30*24*60;
+    public static final String APPLICATION_JSON = "application/json";
     public static final String TOTAL_COUNT_JSON = "totalCount";
     public static final String TOTAL_COST_JSON = "totalCost";
     public static final String ORDER_STATUS_JSON = "orderStatus";
@@ -21,18 +21,13 @@ public class OtherConstants {
     public static final String ADMIN_ROLE = "admin";
     public static final String PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE = "data:image/png;base64,";
     public static final int LENGTH_OF_PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE = 22;
-    public static final String LOGIN_PAGE = "login-page";
     public static final int ID_ORDER_STATUS_IN_PROCESS = 1;
     public static final int ID_ORDER_STATUS_CANCELLED = 4;
     public static final int ID_USER_STATUS_ACTIVE = 1;
     public static final int ID_USER_STATUS_BANNED = 2;
     public static final String UPDATE_TAB = "update";
     public static final String CHANGE_PASSWORD_TAB = "changePassword";
-    public static final int INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA = 1;
-    public static final int LIMIT_LENGTH_OF_PRODUCT_NAME = 45;
-    public static final int LIMIT_LENGTH_OF_CATEGORY_NAME = 30;
-    public static final int LIMIT_LENGTH_OF_PRODUCER_NAME = 30;
-    public static final int LIMIT_LENGTH_OF_PRODUCT_DESCRIPTION = 1500;
+    public static final int INDEX_ONE_EDITED_CATEGORIES = 1;
     public static final String CHANGE_PRODUCT_FORM_ACTION = "change-product";
     public static final String ADD_PRODUCT_FORM_ACTION = "add-product";
     public static final String CHANGE_PRODUCER_FORM_ACTION = "change-producer";
@@ -44,4 +39,5 @@ public class OtherConstants {
     public static final String ERROR_401_TITLE = "error.401.title";
     public static final String ERROR_401_MESSAGE = "error.401.message";
     public static final int ID_PARENT_OF_HIGHEST_HIERARCHY_CATEGORY = 0;
+    public static final String PATH_TO_DEFAULT_IMAGE = "/media/default_image.png";
 }

@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent" prefix="home.">
     <div class="row">
         <jsp:include page="aside-categories.jsp"/>
@@ -10,12 +10,12 @@
     <div class="brand">
         <div class="container-fluid">
             <div class="brand-slider">
-                <div class="brand-item"><img src="${contextPath}/media/brand-1.png" alt=""></div>
-                <div class="brand-item"><img src="${contextPath}/media/brand-2.png" alt=""></div>
-                <div class="brand-item"><img src="${contextPath}/media/brand-3.png" alt=""></div>
-                <div class="brand-item"><img src="${contextPath}/media/brand-4.png" alt=""></div>
-                <div class="brand-item"><img src="${contextPath}/media/brand-5.png" alt=""></div>
-                <div class="brand-item"><img src="${contextPath}/media/brand-6.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-1.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-2.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-3.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-4.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-5.png" alt=""></div>
+                <div class="brand-item"><img src="${requestScope.contextPath}/media/brand-6.png" alt=""></div>
             </div>
         </div>
     </div>

@@ -13,13 +13,13 @@ public class UserStatusDaoImpl extends AbstractBaseDao implements UserStatusDao 
     private static final ResultSetHandler<List<UserStatus>> userStatusesResultSetHandler =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.USER_STATUS_RESULT_SET_HANDLER);
 
-    private static final String SELECT_USER_STATUS_BY_ID_QUERY = "SELECT us.id as id_user_status, usi.name, explanation FROM user_status us " +
-            "LEFT JOIN user_status_detail usi ON us.id=usi.id " +
-            "LEFT JOIN language l ON usi.id_language=l.id WHERE us.id = ? " +
-            "AND l.id in (SELECT l.id FROM language l WHERE l.code=?)";
-    private static final String SELECT_ALL_USER_STATUSES_QUERY = "SELECT us.id as id_user_status, usi.name, explanation FROM user_status us " +
-            "LEFT JOIN user_status_detail usi ON us.id=usi.id " +
-            "LEFT JOIN language l ON usi.id_language=l.id WHERE " +
+    private static final String SELECT_USER_STATUS_BY_ID_QUERY = "SELECT us.id as user_status_id, usd.name, explanation " +
+            "FROM user_status us LEFT JOIN user_status_detail usd ON us.id = usd.id " +
+            "LEFT JOIN language l ON usd.language_id = l.id WHERE us.id = ? " +
+            "AND l.id in (SELECT l.id FROM language l WHERE l.code = ?)";
+    private static final String SELECT_ALL_USER_STATUSES_QUERY = "SELECT us.id as user_status_id, usd.name, explanation " +
+            "FROM user_status us LEFT JOIN user_status_detail usd ON us.id=usd.id " +
+            "LEFT JOIN language l ON usd.language_id = l.id WHERE " +
             "l.id in (SELECT l.id FROM language l WHERE l.code = ?)";
 
     @Override

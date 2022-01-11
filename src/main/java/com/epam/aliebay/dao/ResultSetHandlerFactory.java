@@ -3,20 +3,19 @@ package com.epam.aliebay.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import com.epam.aliebay.entity.*;
-
-import static com.epam.aliebay.constant.OtherConstants.PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE;
+import com.epam.aliebay.util.AppUtils;
 
 public final class ResultSetHandlerFactory {
+    private final static int INDEX_OF_FIRST_COLUMN = 1;
 
-    public static ResultSetHandler<Product> PRODUCT_RESULT_SET_HANDLER = new ResultSetHandler<Product>() {
+    public static final ResultSetHandler<Product> PRODUCT_RESULT_SET_HANDLER = new ResultSetHandler<Product>() {
         @Override
         public Product handle(ResultSet rs) throws SQLException {
             Product product = new Product();
-            product.setId(rs.getLong("id_product"));
+            product.setId(rs.getLong("product_id"));
             product.setName(rs.getString("name"));
             product.setDescription(rs.getString("description"));
             product.setPrice(rs.getBigDecimal("price"));
@@ -25,39 +24,37 @@ public final class ResultSetHandlerFactory {
             Producer producer = PRODUCER_RESULT_SET_HANDLER.handle(rs);
             product.setProducer(producer);
             product.setCount(rs.getInt("count"));
-            product.setImage(PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE +
-                    Base64.getEncoder().encodeToString(rs.getBytes("image")));
+            product.setImage(AppUtils.mapImageBytesToImageWithPrefix(rs.getBytes("product_image")));
             return product;
         }
     };
 
-    public static ResultSetHandler<Category> CATEGORY_RESULT_SET_HANDLER = new ResultSetHandler<Category>() {
+    public static final ResultSetHandler<Category> CATEGORY_RESULT_SET_HANDLER = new ResultSetHandler<Category>() {
         @Override
         public Category handle(ResultSet rs) throws SQLException {
             Category category = new Category();
-            category.setId(rs.getInt("id_category"));
-            category.setName(rs.getString("name_category"));
-            category.setParentCategoryId(rs.getInt("id_parent"));
-            category.setImage(PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE +
-                    Base64.getEncoder().encodeToString(rs.getBytes("image")));
+            category.setId(rs.getInt("category_id"));
+            category.setName(rs.getString("category_name"));
+            category.setParentCategoryId(rs.getInt("parent_id"));
+            category.setImage(AppUtils.mapImageBytesToImageWithPrefix(rs.getBytes("category_image")));
             Language language = LANGUAGE_RESULT_SET_HANDLER.handle(rs);
             category.setLanguage(language);
             return category;
         }
     };
 
-    public static ResultSetHandler<Producer> PRODUCER_RESULT_SET_HANDLER = rs -> {
+    public static final ResultSetHandler<Producer> PRODUCER_RESULT_SET_HANDLER = rs -> {
         Producer producer = new Producer();
-        producer.setId(rs.getInt("id_producer"));
-        producer.setName(rs.getString("name_producer"));
+        producer.setId(rs.getInt("producer_id"));
+        producer.setName(rs.getString("producer_name"));
         return producer;
     };
 
-    public static ResultSetHandler<User> USER_RESULT_SET_HANDLER = new ResultSetHandler<User>() {
+    public static final ResultSetHandler<User> USER_RESULT_SET_HANDLER = new ResultSetHandler<User>() {
         @Override
         public User handle(ResultSet rs) throws SQLException {
             User user = new User();
-            user.setId(rs.getInt("id"));
+            user.setId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
             user.setEmail(rs.getString("email"));
@@ -72,10 +69,10 @@ public final class ResultSetHandlerFactory {
         }
     };
 
-    public static ResultSetHandler<OrderItem> ORDER_ITEM_RESULT_SET_HANDLER = rs -> {
+    public static final ResultSetHandler<OrderItem> ORDER_ITEM_RESULT_SET_HANDLER = rs -> {
         OrderItem orderItem = new OrderItem();
-        orderItem.setId(rs.getLong("id"));
-        orderItem.setIdOrder(rs.getLong("id_order"));
+        orderItem.setId(rs.getLong("order_item_id"));
+        orderItem.setOrderId(rs.getLong("order_id"));
         Product product = PRODUCT_RESULT_SET_HANDLER.handle(rs);
         orderItem.setProduct(product);
         orderItem.setCount(rs.getInt("count_order_item"));
@@ -83,12 +80,12 @@ public final class ResultSetHandlerFactory {
         return orderItem;
     };
 
-    public static ResultSetHandler<Order> ORDER_RESULT_SET_HANDLER = new ResultSetHandler<Order>() {
+    public static final ResultSetHandler<Order> ORDER_RESULT_SET_HANDLER = new ResultSetHandler<Order>() {
         @Override
         public Order handle(ResultSet rs) throws SQLException {
             Order order = new Order();
-            order.setId(rs.getLong("id"));
-            order.setIdUser(rs.getInt("id_user"));
+            order.setId(rs.getLong("order_id"));
+            order.setUserId(rs.getInt("user_id"));
             order.setCreated(rs.getTimestamp("created"));
             OrderStatus orderStatus = ORDER_STATUS_RESULT_SET_HANDLER.handle(rs);
             order.setStatus(orderStatus);
@@ -98,51 +95,44 @@ public final class ResultSetHandlerFactory {
         }
     };
 
-    public static ResultSetHandler<OrderStatus> ORDER_STATUS_RESULT_SET_HANDLER = rs -> {
+    public static final ResultSetHandler<OrderStatus> ORDER_STATUS_RESULT_SET_HANDLER = rs -> {
         OrderStatus orderStatus = new OrderStatus();
-        orderStatus.setId(rs.getInt("id_order_status"));
+        orderStatus.setId(rs.getInt("order_status_id"));
         orderStatus.setName(rs.getString("name"));
         orderStatus.setExplanation(rs.getString("explanation"));
         return orderStatus;
     };
-    public static ResultSetHandler<UserStatus> USER_STATUS_RESULT_SET_HANDLER = rs -> {
+
+    public static final ResultSetHandler<UserStatus> USER_STATUS_RESULT_SET_HANDLER = rs -> {
         UserStatus userStatus = new UserStatus();
-        userStatus.setId(rs.getInt("id_user_status"));
+        userStatus.setId(rs.getInt("user_status_id"));
         userStatus.setName(rs.getString("name"));
         userStatus.setExplanation(rs.getString("explanation"));
         return userStatus;
     };
-    public static ResultSetHandler<Language> LANGUAGE_RESULT_SET_HANDLER = rs -> {
+
+    public static final ResultSetHandler<Language> LANGUAGE_RESULT_SET_HANDLER = rs -> {
         Language language = new Language();
-        language.setId(rs.getInt("id_language"));
+        language.setId(rs.getInt("language_id"));
         language.setCode(rs.getString("code"));
-        language.setName(rs.getString("name_language"));
+        language.setName(rs.getString("language_name"));
         return language;
     };
-
-    public static ResultSetHandler<Integer> getCountResultSetHandler() {
-        return rs -> {
-            if (rs.next()) {
-                return rs.getInt(1);
-            } else {
-                return 0;
-            }
-        };
-    }
 
     public static ResultSetHandler<Long> getLongResultSetHandler() {
         return rs -> {
             rs.next();
-            return rs.getLong("id");
+            return rs.getLong(INDEX_OF_FIRST_COLUMN);
         };
     }
 
     public static ResultSetHandler<Integer> getIntResultSetHandler() {
         return rs -> {
             rs.next();
-            return rs.getInt("id");
+            return rs.getInt(INDEX_OF_FIRST_COLUMN);
         };
     }
+
     public static <T> ResultSetHandler<T> getSingleResultSetHandler(final ResultSetHandler<T> oneRowResultSetHandler) {
         return rs -> {
             if (rs.next()) {

@@ -1,19 +1,18 @@
 package com.epam.aliebay.action.impl.ajax;
 
 import com.epam.aliebay.action.Action;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.ProductDao;
 import com.epam.aliebay.exception.ProductNotFoundException;
 import com.epam.aliebay.model.ShoppingCartItem;
 import com.epam.aliebay.util.ActionUtils;
 import com.epam.aliebay.util.RoutingUtils;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.entity.Product;
 import com.epam.aliebay.model.ShoppingCart;
 import com.epam.aliebay.util.SessionUtils;
 import com.epam.aliebay.util.WebUtils;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,10 +24,10 @@ import static com.epam.aliebay.constant.RequestParameterNamesConstants.COUNT_PAR
 import static com.epam.aliebay.constant.RequestParameterNamesConstants.ID_PRODUCT_PARAMETER;
 
 public class AddProductToCartAction implements Action {
-    private final ProductDao productDao = PostgreSqlDaoFactory.getInstance().getProductDao();
+    private final ProductDao productDao = DaoFactory.getDaoFactory().getProductDao();
 
     @Override
-    public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         long idProduct = Long.parseLong(req.getParameter(ID_PRODUCT_PARAMETER));
         int count = Integer.parseInt(req.getParameter(COUNT_PARAMETER));
         ShoppingCart shoppingCart = SessionUtils.getCurrentShoppingCart(req);
@@ -52,8 +51,8 @@ public class AddProductToCartAction implements Action {
             productsInShoppingCart.put(product, new ShoppingCartItem(count, product.getPrice().multiply(BigDecimal.valueOf(count))));
         }
         shoppingCart.refreshStatistics();
-        String coockieCart = ActionUtils.serializeShoppingCart(productsInShoppingCart);
-        WebUtils.setCookie(SHOPPING_CART_COOCKIE, String.valueOf(coockieCart), SHOPPING_CART_COOCKIE_AGE, resp);
+        String cookieCart = ActionUtils.serializeShoppingCart(productsInShoppingCart);
+        WebUtils.setCookie(SHOPPING_CART_COOCKIE, String.valueOf(cookieCart), SHOPPING_CART_COOCKIE_AGE, resp);
         sendResponse(shoppingCart, req, resp);
     }
 

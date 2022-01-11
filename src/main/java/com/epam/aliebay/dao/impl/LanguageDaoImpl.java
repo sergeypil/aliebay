@@ -10,7 +10,7 @@ public class LanguageDaoImpl extends AbstractBaseDao implements LanguageDao {
     private static final ResultSetHandler<List<Language>> languagesResultSetHandler =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.LANGUAGE_RESULT_SET_HANDLER);
 
-    private static final String SELECT_ALL_CATEGORIES_QUERY = "SELECT id as id_language, code, name as name_language FROM language";
+    private static final String SELECT_ALL_CATEGORIES_QUERY = "SELECT id as language_id, code, name as language_name FROM language";
 
     @Override
     public List<Language> getAllLanguages() {

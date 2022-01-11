@@ -1,7 +1,7 @@
 package com.epam.aliebay.filter;
 
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.LanguageDao;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.entity.Language;
 
 import javax.servlet.FilterChain;
@@ -18,7 +18,7 @@ import static com.epam.aliebay.constant.AttributeConstants.*;
 import static com.epam.aliebay.constant.OtherConstants.LANGUAGE_EN;
 
 public class LanguageFilter extends AbstractFilter {
-    private final LanguageDao languageDao = PostgreSqlDaoFactory.getInstance().getLanguageDao();
+    private final LanguageDao languageDao = DaoFactory.getDaoFactory().getLanguageDao();
 
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {

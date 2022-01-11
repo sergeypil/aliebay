@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-final class ConnectionProvider {
+public final class ConnectionProvider {
     private static final Logger LOGGER = Logger.getLogger(ConnectionProvider.class);
 
     static {
@@ -34,7 +34,7 @@ final class ConnectionProvider {
         }
     }
 
-    static String getProperty(String key) {
+    public static String getProperty(String key) {
         Properties properties = new Properties();
         try {
             properties.load(ConnectionProvider.class.getResourceAsStream("/application.properties"));

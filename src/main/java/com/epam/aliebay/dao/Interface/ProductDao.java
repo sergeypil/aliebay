@@ -9,7 +9,7 @@ public interface ProductDao {
 
     Optional<Product> getProductById(long id);
 
-    List<Product> getAllProducts();
+    List<Product> getAllProducts(String language);
 
     void updateProduct(Product product, long id);
 
@@ -26,10 +26,6 @@ public interface ProductDao {
     List<Product> getProductsByCategory(int idCategory);
 
     void saveProduct(Product product);
-
-    List<Product> getProductsByProducer(int idProducer);
-
-    List<Product> getProductsWithOrderAndSearch(String sortParam, String searchParam);
 
     int getCountOfProductsWithSearch(String searchParam);
 

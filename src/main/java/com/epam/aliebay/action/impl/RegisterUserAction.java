@@ -1,14 +1,18 @@
 package com.epam.aliebay.action.impl;
 
 import com.epam.aliebay.action.Action;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.UserDao;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.dao.Interface.UserStatusDao;
 import com.epam.aliebay.entity.User;
 import com.epam.aliebay.entity.UserStatus;
 import com.epam.aliebay.exception.UserNotFoundException;
+import com.epam.aliebay.exception.UserStatusNotFoundException;
+import com.epam.aliebay.dto.RegisterDto;
+import com.epam.aliebay.util.ActionUtils;
 import com.epam.aliebay.util.RoutingUtils;
-import com.epam.aliebay.util.ValidationUtils;
+import com.epam.aliebay.validation.form.FormValidator;
+import com.epam.aliebay.validation.form.RegisterFormConstraintValidatorsStorage;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.servlet.ServletException;
@@ -17,105 +21,85 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.epam.aliebay.constant.ActionConstants.GET_HOME_PAGE_ACTION;
 import static com.epam.aliebay.constant.AttributeConstants.*;
-import static com.epam.aliebay.constant.AttributeConstants.WRONG_PASSWORD_ATTRIBUTE;
 import static com.epam.aliebay.constant.OtherConstants.CUSTOMER_ROLE;
 import static com.epam.aliebay.constant.OtherConstants.ID_USER_STATUS_ACTIVE;
 import static com.epam.aliebay.constant.JspNameConstants.REGISTER_JSP;
-import static com.epam.aliebay.constant.RequestParameterNamesConstants.*;
 
 public class RegisterUserAction implements Action {
-    private final UserDao userDao = PostgreSqlDaoFactory.getInstance().getUserDao();
-    private final UserStatusDao userStatusDao = PostgreSqlDaoFactory.getInstance().getUserStatusDao();
+    private final UserDao userDao = DaoFactory.getDaoFactory().getUserDao();
+    private final UserStatusDao userStatusDao = DaoFactory.getDaoFactory().getUserStatusDao();
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        User editedUser = new User();
-        boolean areAllParametersValid = true;
-        if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(FIRST_NAME_PARAMETER))) {
-            req.setAttribute(WRONG_FIRST_NAME_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedUser.setFirstName(req.getParameter(FIRST_NAME_PARAMETER));
-        }
-        if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(LAST_NAME_PARAMETER))) {
-            req.setAttribute(WRONG_LAST_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedUser.setLastName(req.getParameter(LAST_NAME_PARAMETER));
-        }
-        if (!ValidationUtils.isValidUsername(req.getParameter(USERNAME_PARAMETER))) {
-            req.setAttribute(WRONG_USERNAME_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            Optional<User> optionalUser = userDao.getUserByUsername(req.getParameter(USERNAME_PARAMETER),
-                    (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE));
-            if (optionalUser.isPresent()) {
-                req.setAttribute(ERROR_USERNAME_EXIST_ATTRIBUTE, true);
-                areAllParametersValid = false;
-            } else {
-                editedUser.setUsername(req.getParameter(USERNAME_PARAMETER));
-            }
-        }
-        if (!ValidationUtils.isValidPhoneNumber(req.getParameter(PHONE_NUMBER_PARAMETER))) {
-            req.setAttribute(WRONG_PHONE_NUMBER_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedUser.setPhoneNumber(req.getParameter(PHONE_NUMBER_PARAMETER));
-        }
-        if (!ValidationUtils.isValidBirthDate(req.getParameter(BIRTH_DATE_PARAMETER))) {
-            req.setAttribute(WRONG_BIRTH_DATE_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedUser.setBirthDate(Date.valueOf(req.getParameter(BIRTH_DATE_PARAMETER)));
-        }
-        if (!ValidationUtils.isValidEmail(req.getParameter(EMAIL_PARAMETER))) {
-            req.setAttribute(WRONG_EMAIL_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            Optional<User> optionalUser = userDao.getUserByEmail(req.getParameter(EMAIL_PARAMETER),
-                    (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE));
-            if (optionalUser.isPresent()) {
-                req.setAttribute(ERROR_EMAIL_EXIST_ATTRIBUTE, true);
-                areAllParametersValid = false;
-            } else {
-                editedUser.setEmail(req.getParameter(EMAIL_PARAMETER));
-            }
-        }
-
-        if (!ValidationUtils.isValidPassword(req.getParameter(PASSWORD_PARAMETER))) {
-            req.setAttribute(WRONG_PASSWORD_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!ValidationUtils.isValidConfirmedPassword(req.getParameter(PASSWORD_PARAMETER),
-                req.getParameter(CONFIRMED_PASSWORD_PARAMETER))) {
-            req.setAttribute(WRONG_CONFIRMED_PASSWORD_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!areAllParametersValid) {
-            req.setAttribute(EDITED_USER_ATTRIBUTE, editedUser);
+        RegisterDto registerDto = ActionUtils.createRegisterDtoFromRequest(req);
+        Set<String> validationErrorAttributes = getValidationErrorAttributes(registerDto);
+        checkIfUsernameExist(registerDto, validationErrorAttributes, req);
+        checkIfEmailExist(registerDto, validationErrorAttributes, req);
+        if (validationErrorAttributes.size() != 0 ) {
+            validationErrorAttributes.forEach(attr -> req.setAttribute(attr, true));
+            req.setAttribute(REGISTER_DTO_ATTRIBUTE, registerDto);
             RoutingUtils.forwardToPage(REGISTER_JSP, req, resp);
         } else {
-            String hashedPassword = BCrypt.hashpw(req.getParameter(PASSWORD_PARAMETER), BCrypt.gensalt());
-            editedUser.setPassword(hashedPassword);
-            UserStatus orderStatus = userStatusDao.getUserStatusById(ID_USER_STATUS_ACTIVE, (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).get();
-            editedUser.setStatus(orderStatus);
-            editedUser.setRole(CUSTOMER_ROLE);
-            userDao.saveUser(editedUser);
-            User savedUser = userDao.getUserByUsername(editedUser.getUsername(),
+            User user = mapRegisterDtoToUser(registerDto, req);
+            userDao.saveUser(user);
+            User savedUser = userDao.getUserByUsername(user.getUsername(),
                     (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).orElseThrow(
-                            () -> new UserNotFoundException("Cannot find user with username " + editedUser.getUsername()));
+                    () -> new UserNotFoundException("Cannot find user with username " + user.getUsername()));
             HttpSession session = req.getSession();
             session.setAttribute(CURRENT_USER_ATTRIBUTE, savedUser);
-            if (session.getAttribute(TARGET_PAGE_ATTRIBUTE) != null) {
-                resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) +
-                        (String) session.getAttribute(TARGET_PAGE_ATTRIBUTE));
-            } else {
-                resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) + GET_HOME_PAGE_ACTION);
+            resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) + GET_HOME_PAGE_ACTION);
+        }
+    }
+
+    private void checkIfUsernameExist(RegisterDto registerDto, Set<String> validationErrorAttributes, HttpServletRequest req) {
+        if(!validationErrorAttributes.contains(WRONG_USERNAME_ATTRIBUTE)) {
+            Optional<User> optionalUser = userDao.getUserByUsername(registerDto.getUsername(),
+                    (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE));
+            if (optionalUser.isPresent()) {
+                validationErrorAttributes.add(ERROR_USERNAME_EXIST_ATTRIBUTE);
             }
         }
+    }
+
+    private void checkIfEmailExist(RegisterDto registerDto, Set<String> validationErrorAttributes, HttpServletRequest req) {
+        if(!validationErrorAttributes.contains(WRONG_EMAIL_ATTRIBUTE)) {
+            Optional<User> optionalUser = userDao.getUserByEmail(registerDto.getEmail(),
+                    (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE));
+            if (optionalUser.isPresent()) {
+                validationErrorAttributes.add(ERROR_EMAIL_EXIST_ATTRIBUTE);
+            }
+        }
+    }
+
+    private Set<String> getValidationErrorAttributes(RegisterDto registerDto) {
+        Set<String> validationErrorAttributes = new HashSet<>();
+        RegisterFormConstraintValidatorsStorage registerFormConstraintValidatorsStorage =
+                RegisterFormConstraintValidatorsStorage.createDefaultForRegisterPage(registerDto, validationErrorAttributes);
+        FormValidator.validate(registerFormConstraintValidatorsStorage);
+        return validationErrorAttributes;
+    }
+
+    private User mapRegisterDtoToUser(RegisterDto registerDto, HttpServletRequest req) {
+        User user = new User();
+        user.setFirstName(registerDto.getFirstName());
+        user.setLastName(registerDto.getLastName());
+        user.setUsername(registerDto.getUsername());
+        user.setBirthDate(Date.valueOf(registerDto.getBirthDate()));
+        user.setEmail(registerDto.getEmail());
+        user.setPhoneNumber(registerDto.getPhoneNumber());
+        String hashedPassword = BCrypt.hashpw(registerDto.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        UserStatus orderStatus = userStatusDao.getUserStatusById(ID_USER_STATUS_ACTIVE,
+                (String) req.getSession().getAttribute(CURRENT_LANGUAGE_ATTRIBUTE)).orElseThrow(
+                () -> new UserStatusNotFoundException("Cannot find user status with id = " + ID_USER_STATUS_ACTIVE));
+        user.setStatus(orderStatus);
+        user.setRole(CUSTOMER_ROLE);
+        return user;
     }
 }

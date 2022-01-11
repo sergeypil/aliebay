@@ -3,62 +3,54 @@ package com.epam.aliebay.dao;
 import com.epam.aliebay.dao.Interface.*;
 import com.epam.aliebay.dao.impl.*;
 
-public class PostgreSqlDaoFactory {
+public class PostgreSqlDaoFactory extends DaoFactory {
     private static final PostgreSqlDaoFactory instance = new PostgreSqlDaoFactory();
-    private UserDao userDao;
-    private ProductDao productDao;
-    private CategoryDao categoryDao;
-    private ProducerDao producerDao;
-    private OrderDao orderDao;
-    private OrderStatusDao orderStatusDao;
-    private UserStatusDao userStatusDao;
-    private LanguageDao languageDao;
 
     private PostgreSqlDaoFactory() {
-        userDao = new UserDaoImpl();
-        productDao = new ProductDaoImpl();
-        categoryDao = new CategoryDaoImpl();
-        producerDao = new ProducerDaoImpl();
-        orderDao = new OrderDaoImpl();
-        orderStatusDao = new OrderStatusDaoImpl();
-        userStatusDao = new UserStatusDaoImpl();
-        languageDao = new LanguageDaoImpl();
     }
 
     public static PostgreSqlDaoFactory getInstance() {
         return instance;
     }
 
+    @Override
     public UserDao getUserDao() {
-        return userDao;
+        return new UserDaoImpl();
     }
 
+    @Override
     public ProductDao getProductDao() {
-        return productDao;
+        return new ProductDaoImpl();
     }
 
+    @Override
     public CategoryDao getCategoryDao() {
-        return categoryDao;
+        return new CategoryDaoImpl();
     }
 
+    @Override
     public ProducerDao getProducerDao() {
-        return producerDao;
+        return new ProducerDaoImpl();
     }
 
+    @Override
     public OrderDao getOrderDao() {
-        return orderDao;
+        return new OrderDaoImpl();
     }
 
+    @Override
     public OrderStatusDao getOrderStatusDao() {
-        return orderStatusDao;
+        return new OrderStatusDaoImpl();
     }
 
+    @Override
     public UserStatusDao getUserStatusDao() {
-        return userStatusDao;
+        return new UserStatusDaoImpl();
     }
 
+    @Override
     public LanguageDao getLanguageDao() {
-        return languageDao;
+        return new LanguageDaoImpl();
     }
 }
 

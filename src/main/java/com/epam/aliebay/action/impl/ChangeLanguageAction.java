@@ -1,9 +1,8 @@
 package com.epam.aliebay.action.impl;
 
 import com.epam.aliebay.action.Action;
-import com.epam.aliebay.util.ValidationUtils;
+import com.epam.aliebay.validation.field.NotNullOrEmptyValidator;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,8 +16,8 @@ import static com.epam.aliebay.constant.RequestParameterNamesConstants.LANGUAGE_
 public class ChangeLanguageAction implements Action {
 
     @Override
-    public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(LANGUAGE_PARAMETER))) {
+    public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (NotNullOrEmptyValidator.isValid(req.getParameter(LANGUAGE_PARAMETER))) {
             String currentLanguage = req.getParameter(LANGUAGE_PARAMETER);
             Locale currentLocale = new Locale(currentLanguage);
             req.getSession().setAttribute(CURRENT_LANGUAGE_ATTRIBUTE, currentLanguage);

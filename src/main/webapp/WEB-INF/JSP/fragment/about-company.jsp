@@ -1,6 +1,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page pageEncoding="utf-8" contentType="text/html;charset=UTF-8" language="java" %>
-<fmt:setLocale value="${currentLocale}"/>
+<%@ page pageEncoding="utf-8" contentType="text/html;charset=UTF-8" %>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent" prefix="about.">
 <div class="about col-sm">
         <h1 class="header"><fmt:message key="welcome"/></h1><br>

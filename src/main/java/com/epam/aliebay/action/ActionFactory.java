@@ -13,7 +13,6 @@ import java.util.Map;
 import static com.epam.aliebay.constant.ActionConstants.*;
 
 public class ActionFactory {
-
     private static final Map<String, Action> ACTION_MAP = new HashMap<>();
     private static final ActionFactory ACTION_FACTORY = new ActionFactory();
 

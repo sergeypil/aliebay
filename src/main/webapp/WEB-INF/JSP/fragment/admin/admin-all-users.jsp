@@ -1,10 +1,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent">
-    <c:forEach var="entry" items="${roleToListOfUsers}">
+    <c:forEach var="entry" items="${requestScope.roleToListOfUsers}">
         <h1 class="d-flex justify-content-center page-header">
             <c:choose>
                 <c:when test="${entry.key=='admin'}">
@@ -42,9 +42,9 @@
                                     <a href="#" class="nav-link dropdown-toggle" id="user-status${user.id}"
                                        data-toggle="dropdown">${user.status.name}</a>
                                     <div class="dropdown-menu">
-                                        <c:forEach var="userStatus" items="${userStatuses}">
+                                        <c:forEach var="userStatus" items="${requestScope.userStatuses}">
                                             <a href="#"
-                                               data-url-change-user-status="${hostName}/main/ajax/change-user-status"
+                                               data-url-change-user-status="${requestScope.hostName}/main/ajax/change-user-status"
                                                data-id-user="${user.id}"
                                                data-id-user-status="${userStatus.id}"
                                                class="change-user-status dropdown-item">${userStatus.name}</a>

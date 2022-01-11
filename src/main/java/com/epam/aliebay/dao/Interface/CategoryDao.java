@@ -1,20 +1,17 @@
 package com.epam.aliebay.dao.Interface;
 
 import com.epam.aliebay.entity.Category;
+import com.epam.aliebay.dto.CategoryDto;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public interface CategoryDao {
 
     List<Category> getAllCategoriesAllLanguages();
 
-    Optional<Category> getCategoryById(int id, String language);
+    void saveCategory(CategoryDto categoryDto, byte[] imageBytes);
 
-    void saveCategory(Map<Integer, Category> langToCategory);
-
-    void updateCategory(Map<Integer, Category> langToCategory, int id);
+    void updateCategory(CategoryDto categoryDto, byte[] imageBytes, int id);
 
     void deleteCategoryById(int id);
 

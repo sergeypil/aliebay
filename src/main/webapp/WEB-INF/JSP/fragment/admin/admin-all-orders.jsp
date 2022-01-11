@@ -1,8 +1,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent">
     <h1 class="d-flex justify-content-center page-header"><fmt:message key="header.orders"/></h1>
     <div class="table-responsive cart-page">
@@ -21,7 +21,7 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="order" items="${allOrders}">
+            <c:forEach var="order" items="${requestScope.allOrders}">
                 <tr>
                 <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">${order.id}</td>
                 <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">
@@ -31,9 +31,9 @@
                                 <a href="#" class="nav-link dropdown-toggle" id="order-status${order.id}"
                                    data-toggle="dropdown">${order.status.name}</a>
                                 <div class="dropdown-menu">
-                                    <c:forEach var="orderStatus" items="${orderStatuses}">
+                                    <c:forEach var="orderStatus" items="${requestScope.orderStatuses}">
                                         <a href="#"
-                                           data-url-change-order-status="${hostName}/main/ajax/change-order-status"
+                                           data-url-change-order-status="${requestScope.hostName}/main/ajax/change-order-status"
                                            data-id-order="${order.id}"
                                            data-id-order-status="${orderStatus.id}"
                                            class="change-order-status dropdown-item">${orderStatus.name}</a>
@@ -47,7 +47,7 @@
                     </c:choose>
                 </td>
                 <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">${order.created}</td>
-                <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">${order.idUser}</td>
+                <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">${order.userId}</td>
                 <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">$${order.cost}</td>
                 <td ROWSPAN="${fn:length(order.items)!=0 ? fn:length(order.items) : 1}">${order.address}</td>
                 <c:forEach var="item" items="${order.items}" varStatus="loop">
@@ -56,7 +56,7 @@
                     </c:if>
                     <td>
                         <div class="img">
-                            <a href="${hostName}/main/product?id=${item.product.id}">
+                            <a href="${requestScope.hostName}/main/product?id=${item.product.id}">
                                 <img src="${item.product.image}" alt="Image"></a>
                             <p>${item.product.name}</p>
                         </div>
@@ -72,7 +72,6 @@
                     <td></td>
                     <td></td>
                 </c:if>
-                </tr>
             </c:forEach>
             </tbody>
         </table>

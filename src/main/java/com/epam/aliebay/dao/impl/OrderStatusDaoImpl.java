@@ -13,13 +13,13 @@ public class OrderStatusDaoImpl extends AbstractBaseDao implements OrderStatusDa
     private static final ResultSetHandler<List<OrderStatus>> orderStatusesResultSetHandler =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.ORDER_STATUS_RESULT_SET_HANDLER);
 
-    private static final String SELECT_ORDER_STATUS_BY_ID_QUERY = "SELECT os.id as id_order_status, osi.name, explanation FROM order_status os " +
-            "LEFT JOIN order_status_detail osi ON os.id=osi.id " +
-            "LEFT JOIN language l ON osi.id_language=l.id WHERE os.id = ? " +
+    private static final String SELECT_ORDER_STATUS_BY_ID_QUERY = "SELECT os.id AS order_status_id, osd.name, os.explanation FROM order_status os " +
+            "LEFT JOIN order_status_detail osd ON os.id = osd.id " +
+            "LEFT JOIN language l ON osd.language_id = l.id WHERE os.id = ? " +
             "AND l.id in (SELECT l.id FROM language l WHERE l.code = ?)";
-    private static final String SELECT_ALL_ORDER_STATUSES_QUERY = "SELECT os.id as id_order_status, osi.name, explanation FROM order_status os " +
-            "LEFT JOIN order_status_detail osi ON os.id=osi.id " +
-            "LEFT JOIN language l ON osi.id_language=l.id WHERE " +
+    private static final String SELECT_ALL_ORDER_STATUSES_QUERY = "SELECT os.id AS order_status_id, osd.name, os.explanation FROM order_status os " +
+            "LEFT JOIN order_status_detail osd ON os.id = osd.id " +
+            "LEFT JOIN language l ON osd.language_id = l.id WHERE " +
             "l.id in (SELECT l.id FROM language l WHERE l.code = ?)";
 
     @Override

@@ -27,7 +27,7 @@
 	<jsp:include page="fragment/bottom-bar.jsp" />
 <div class="header">
 	<div class="container-fluid">
-		<jsp:include page="${currentPage}" />
+		<jsp:include page="${requestScope.currentPage}" />
 	</div>
 </div>
 <footer class="footer">
@@ -45,4 +45,3 @@
 <!-- Template Javascript -->
 <script src="<c:url value="/static/js/main.js"/>"></script>
 </body>
-</html>

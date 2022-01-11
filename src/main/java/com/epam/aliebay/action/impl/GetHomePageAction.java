@@ -1,8 +1,8 @@
 package com.epam.aliebay.action.impl;
 
 import com.epam.aliebay.action.Action;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.CategoryDao;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.entity.Category;
 import com.epam.aliebay.util.RoutingUtils;
 
@@ -18,7 +18,7 @@ import static com.epam.aliebay.constant.JspNameConstants.HOME_JSP;
 
 public class GetHomePageAction implements Action {
 
-    private final CategoryDao categoryDao = PostgreSqlDaoFactory.getInstance().getCategoryDao();
+    private final CategoryDao categoryDao = DaoFactory.getDaoFactory().getCategoryDao();
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {

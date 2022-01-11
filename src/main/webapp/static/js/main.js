@@ -98,9 +98,10 @@
         var oldValue = $button.parent().find('input').val();
         var btnMinus = $('.btn-minus');
         var btnPlus = $('.btn-plus');
+        var newValue;
         if ($button.hasClass('btn-plus')) {
             if (oldValue < countAvailable) {
-                var newValue = parseFloat(oldValue) + 1;
+                newValue = parseFloat(oldValue) + 1;
                 btnPlus.show();
                 btnMinus.show();
             }
@@ -111,7 +112,7 @@
             }
         } else {
             if (oldValue > 1) {
-                var newValue = parseFloat(oldValue) - 1;
+                newValue = parseFloat(oldValue) - 1;
                 btnPlus.show();
                 btnMinus.show();
             } else {

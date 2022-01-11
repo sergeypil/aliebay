@@ -1,15 +1,17 @@
 package com.epam.aliebay.action.impl;
 
 import com.epam.aliebay.action.Action;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.OrderDao;
 import com.epam.aliebay.entity.*;
 import com.epam.aliebay.exception.OrderStatusNotFoundException;
+import com.epam.aliebay.dto.CheckoutDto;
 import com.epam.aliebay.util.RoutingUtils;
 import com.epam.aliebay.dao.Interface.OrderStatusDao;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.model.ShoppingCart;
 import com.epam.aliebay.util.SessionUtils;
-import com.epam.aliebay.util.ValidationUtils;
+import com.epam.aliebay.validation.form.CheckoutConstraintValidatorsStorage;
+import com.epam.aliebay.validation.form.FormValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,9 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.epam.aliebay.constant.ActionConstants.GET_ACCOUNT_PAGE_ACTION;
 import static com.epam.aliebay.constant.AttributeConstants.*;
@@ -27,33 +31,16 @@ import static com.epam.aliebay.constant.JspNameConstants.CHECKOUT_JSP;
 import static com.epam.aliebay.constant.RequestParameterNamesConstants.*;
 
 public class MakeOrderAction implements Action {
-    private final OrderDao orderDao = PostgreSqlDaoFactory.getInstance().getOrderDao();
-    private final OrderStatusDao orderStatusDao = PostgreSqlDaoFactory.getInstance().getOrderStatusDao();
+    private final OrderDao orderDao = DaoFactory.getDaoFactory().getOrderDao();
+    private final OrderStatusDao orderStatusDao = DaoFactory.getDaoFactory().getOrderStatusDao();
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        boolean areAllParametersValid = true;
-        if (!ValidationUtils.isValidCardNumber(req.getParameter(CARD_NUMBER_PARAMETER))) {
-            req.setAttribute(WRONG_CARD_NUMBER_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!ValidationUtils.isValidSecurityCode(req.getParameter(SECURITY_CODE_PARAMETER))) {
-            req.setAttribute(WRONG_SECURITY_CODE_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!ValidationUtils.isValidCardHolderName(req.getParameter(CARD_HOLDER_PARAMETER))) {
-            req.setAttribute(WRONG_CARD_HOLDER_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!ValidationUtils.isValidDate(req.getParameter(EXPIRATION_DATE_PARAMETER))) {
-            req.setAttribute(WRONG_DATE_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!ValidationUtils.isValidAddress(req.getParameter(ADDRESS_PARAMETER))) {
-            req.setAttribute(WRONG_ADDRESS_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        }
-        if (!areAllParametersValid) {
+        CheckoutDto checkoutDto = createCheckoutDtoFromRequest(req);
+        Set<String> validationErrorAttributes = getValidationErrorAttributes(checkoutDto);
+        if (validationErrorAttributes.size() != 0 ) {
+            validationErrorAttributes.forEach(attr -> req.setAttribute(attr, true));
+            req.getSession().setAttribute(CHECKOUT_DTO, checkoutDto);
             RoutingUtils.forwardToPage(CHECKOUT_JSP, req, resp);
         } else {
             User user = (User) req.getSession().getAttribute(CURRENT_USER_ATTRIBUTE);
@@ -63,27 +50,45 @@ public class MakeOrderAction implements Action {
                     () -> new OrderStatusNotFoundException("Cannot find order status with id = " +
                             ID_ORDER_STATUS_IN_PROCESS));
             Order order = new Order();
-            order.setIdUser(user.getId());
+            order.setUserId(user.getId());
             order.setCreated(Timestamp.from(Instant.now()));
             order.setStatus(orderStatus);
             List<OrderItem> orderItems = new ArrayList<>();
-            cart.getProducts().entrySet().forEach(el -> {
-                        OrderItem orderItem = new OrderItem();
-                        Product product = el.getKey();
-                        orderItem.setProduct(product);
-                        Integer count = el.getValue().getCount();
-                        orderItem.setCount(count);
-                        orderItem.setRetainedProductPrice(product.getPrice());
-                        orderItems.add(orderItem);
-                    });
+            cart.getProducts().forEach((product, shopItem) -> {
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProduct(product);
+                Integer count = shopItem.getCount();
+                orderItem.setCount(count);
+                orderItem.setRetainedProductPrice(product.getPrice());
+                orderItems.add(orderItem);
+            });
             order.setItems(orderItems);
             order.setCost(cart.getTotalCost());
             order.setAddress(req.getParameter(ADDRESS_PARAMETER));
             orderDao.saveOrder(order);
             SessionUtils.clearCurrentShoppingCart(req, resp);
             req.getSession().removeAttribute(CURRENT_SHOPPING_CART_ATTRIBUTE);
+            req.getSession().removeAttribute(CHECKOUT_DTO);
             resp.sendRedirect(req.getAttribute(HOST_NAME_ATTRIBUTE) + GET_ACCOUNT_PAGE_ACTION);
         }
+    }
+
+    private Set<String> getValidationErrorAttributes(CheckoutDto checkoutDto) {
+        Set<String> validationErrorAttributes = new HashSet<>();
+        CheckoutConstraintValidatorsStorage checkoutConstraintValidatorsStorage =
+                CheckoutConstraintValidatorsStorage.createDefault(checkoutDto, validationErrorAttributes);
+        FormValidator.validate(checkoutConstraintValidatorsStorage);
+        return validationErrorAttributes;
+    }
+
+    private CheckoutDto createCheckoutDtoFromRequest(HttpServletRequest req) {
+        CheckoutDto checkoutDto = new CheckoutDto();
+        checkoutDto.setCardNumber(req.getParameter(CARD_NUMBER_PARAMETER));
+        checkoutDto.setSecurityCode(req.getParameter(SECURITY_CODE_PARAMETER));
+        checkoutDto.setCardHolder(req.getParameter(CARD_HOLDER_PARAMETER));
+        checkoutDto.setExpirationDate(req.getParameter(EXPIRATION_DATE_PARAMETER));
+        checkoutDto.setAddress(req.getParameter(ADDRESS_PARAMETER));
+        return  checkoutDto;
     }
 }
 

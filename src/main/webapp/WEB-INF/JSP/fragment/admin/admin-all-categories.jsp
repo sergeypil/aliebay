@@ -1,8 +1,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent">
     <h1 class="d-flex justify-content-center page-header"><fmt:message key="header.categories"/></h1>
     <div class="table-responsive cart-page">
@@ -17,7 +17,7 @@
                 <th><fmt:message key="admin.category.name"/></th>
             </thead>
             <tbody>
-            <c:forEach var="entry" items="${idToCategories}">
+            <c:forEach var="entry" items="${requestScope.idToCategories}">
                 <tr>
                     <td rowspan="${fn:length(entry.value)}">${entry.key}</td>
                     <td rowspan="${fn:length(entry.value)}">
@@ -28,13 +28,13 @@
                     <td rowspan="${fn:length(entry.value)}">${entry.value[1].parentCategoryId}</td>
                     <td rowspan="${fn:length(entry.value)}">
                         <div>
-                        <a href="${hostName}/main/change-category-page?id=${entry.value[1].id}">
+                        <a href="${requestScope.hostName}/main/admin/change-category-page?id=${entry.value[1].id}">
                             <i class="fa fa-edit"></i>
                             <fmt:message key="admin.edit"/>
                         </a>
                         </div>
                         <div>
-                        <a href="${hostName}/main/remove-category?id=${entry.value[1].id}">
+                        <a href="${requestScope.hostName}/main/admin/remove-category?id=${entry.value[1].id}">
                             <i class="fa fa-times"></i>
                             <fmt:message key="admin.remove"/>
                         </a>
@@ -50,7 +50,6 @@
                             </tr>
                         </c:if>
                     </c:forEach>
-                </tr>
             </c:forEach>
             </tbody>
         </table>

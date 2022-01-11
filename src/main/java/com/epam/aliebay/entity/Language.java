@@ -1,6 +1,8 @@
 package com.epam.aliebay.entity;
 
-public class Language {
+import java.io.Serializable;
+
+public class Language implements Serializable {
     private int id;
     private String code;
     private String name;

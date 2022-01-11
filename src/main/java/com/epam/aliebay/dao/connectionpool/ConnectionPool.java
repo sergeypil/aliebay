@@ -10,7 +10,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class ConnectionPool {
     private static final Logger LOGGER = Logger.getLogger(ConnectionPool.class);
-    private BlockingQueue<Connection> connections;
+    private final BlockingQueue<Connection> connections;
     private static volatile ConnectionPool instance;
 
     private ConnectionPool() {
@@ -37,7 +37,7 @@ public class ConnectionPool {
     }
 
     public Connection getConnection() {
-        Connection connection = null;
+        Connection connection;
         try {
             connection = connections.take();
             LOGGER.trace("Connection taken successfully");
@@ -55,8 +55,7 @@ public class ConnectionPool {
     }
 
     public void shutDownConnections() {
-        connections.stream()
-                .forEach(connection -> {
+        connections.forEach(connection -> {
                     try {
                         connection.close();
                     } catch (SQLException e) {

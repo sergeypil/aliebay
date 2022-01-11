@@ -17,6 +17,14 @@
   </servlet-mapping>
 
   <filter>
+    <filter-name>DefineHostFilter</filter-name>
+    <filter-class>com.epam.aliebay.filter.DefineHostFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>DefineHostFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
     <filter-name>LanguateFilter</filter-name>
     <filter-class>com.epam.aliebay.filter.LanguageFilter</filter-class>
   </filter>
@@ -37,13 +45,24 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   <filter>
-    <filter-name>CheckAuthenticationFilter</filter-name>
-    <filter-class>com.epam.aliebay.filter.CheckAuthenticationFilter</filter-class>
+    <filter-name>CheckLoginFilter</filter-name>
+    <filter-class>com.epam.aliebay.filter.CheckLoginFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>CheckAuthenticationFilter</filter-name>
+    <filter-name>CheckLoginFilter</filter-name>
     <url-pattern>/main/account</url-pattern>
     <url-pattern>/main/checkout</url-pattern>
+    <url-pattern>/main/admin</url-pattern>
+    <url-pattern>/main/admin/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>CheckAdminFilter</filter-name>
+    <filter-class>com.epam.aliebay.filter.CheckAdminRoleFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CheckAdminFilter</filter-name>
+    <url-pattern>/main/admin</url-pattern>
+    <url-pattern>/main/admin/*</url-pattern>
   </filter-mapping>
   <filter>
     <filter-name>AutoRestoreShoppingCartFilter</filter-name>
@@ -51,7 +70,7 @@
   </filter>
   <filter-mapping>
     <filter-name>AutoRestoreShoppingCartFilter</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/main/*</url-pattern>
   </filter-mapping>
   <filter>
     <filter-name>LoadCategoriesAndProducersFilter</filter-name>
@@ -60,14 +79,6 @@
   <filter-mapping>
     <filter-name>LoadCategoriesAndProducersFilter</filter-name>
     <url-pattern>/main/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>DefineHostFilter</filter-name>
-    <filter-class>com.epam.aliebay.filter.DefineHostFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>DefineHostFilter</filter-name>
-    <url-pattern>/*</url-pattern>
   </filter-mapping>
 
   <listener>

@@ -12,14 +12,6 @@ public class Category {
     public Category() {
     }
 
-    public Category(int id, String name, String image, int parentCategoryId, Language language) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.parentCategoryId = parentCategoryId;
-        this.language = language;
-    }
-
     public int getId() {
         return id;
     }

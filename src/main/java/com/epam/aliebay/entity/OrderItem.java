@@ -4,27 +4,12 @@ import java.math.BigDecimal;
 
 public class OrderItem {
     private long id;
-    private long idOrder;
+    private long orderId;
     private Product product;
     private int count;
     private BigDecimal retainedProductPrice;
 
     public OrderItem() {
-    }
-
-    public OrderItem(long idOrder, Product product, int count, BigDecimal retainedProductPrice) {
-        this.idOrder = idOrder;
-        this.product = product;
-        this.count = count;
-        this.retainedProductPrice = retainedProductPrice;
-    }
-
-    public OrderItem(long id, long idOrder, Product product, int count, BigDecimal retainedProductPrice) {
-        this.id = id;
-        this.idOrder = idOrder;
-        this.product = product;
-        this.count = count;
-        this.retainedProductPrice = retainedProductPrice;
     }
 
     public long getId() {
@@ -35,12 +20,12 @@ public class OrderItem {
         this.id = id;
     }
 
-    public long getIdOrder() {
-        return idOrder;
+    public long getOrderId() {
+        return orderId;
     }
 
-    public void setIdOrder(long idOrder) {
-        this.idOrder = idOrder;
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public int getCount() {
@@ -71,7 +56,7 @@ public class OrderItem {
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
-                ", idOrder=" + idOrder +
+                ", orderId=" + orderId +
                 ", product=" + product +
                 ", count=" + count +
                 ", retainedProductPrice=" + retainedProductPrice +

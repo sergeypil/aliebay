@@ -1,8 +1,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${currentLocale}"/>
+<fmt:setLocale value="${sessionScope.currentLocale}"/>
 <fmt:bundle basename="pagecontent">
     <h1 class="d-flex justify-content-center page-header"><fmt:message key="header.producers"/></h1>
     <div class="table-responsive cart-page">
@@ -15,19 +15,19 @@
 
             </thead>
             <tbody>
-            <c:forEach var="producer" items="${allProducers}">
+            <c:forEach var="producer" items="${requestScope.allProducers}">
                 <tr>
                     <td>${producer.id}</td>
                     <td>${producer.name}</td>
                     <td>
                         <div>
-                            <a href="${hostName}/main/change-producer-page?id=${producer.id}">
+                            <a href="${requestScope.hostName}/main/admin/change-producer-page?id=${producer.id}">
                                 <i class="fa fa-edit"></i>
                                 <fmt:message key="admin.edit"/>
                             </a>
                         </div>
                         <div>
-                            <a href="${hostName}/main/remove-producer?id=${producer.id}">
+                            <a href="${requestScope.hostName}/main/admin/remove-producer?id=${producer.id}">
                                 <i class="fa fa-times"></i>
                                 <fmt:message key="admin.remove"/>
                             </a>

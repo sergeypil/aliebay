@@ -1,8 +1,8 @@
 package com.epam.aliebay.util;
 
 import com.epam.aliebay.constant.AttributeConstants;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.CategoryDao;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
 import com.epam.aliebay.dao.Interface.ProducerDao;
 import com.epam.aliebay.entity.Category;
 import com.epam.aliebay.entity.Language;
@@ -10,35 +10,26 @@ import com.epam.aliebay.entity.Producer;
 import com.epam.aliebay.entity.Product;
 import com.epam.aliebay.exception.CategoryNotFoundException;
 import com.epam.aliebay.exception.ProducerNotFoundException;
+import com.epam.aliebay.dto.CategoryDto;
+import com.epam.aliebay.dto.ProductDto;
+import com.epam.aliebay.dto.RegisterDto;
 import com.epam.aliebay.model.ShoppingCartItem;
-import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.aliebay.constant.AttributeConstants.*;
-import static com.epam.aliebay.constant.AttributeConstants.WRONG_EMPTY_IMAGE_ATTRIBUTE;
-import static com.epam.aliebay.constant.OtherConstants.*;
 import static com.epam.aliebay.constant.RequestParameterNamesConstants.*;
-import static com.epam.aliebay.constant.RequestParameterNamesConstants.IMAGE_PARAMETER;
 
 public final class ActionUtils {
-    private static final Logger logger = Logger.getLogger(ActionUtils.class);
-    private static final int BUFFER_LENGTH = 4 * 1024;
 
     public static void getDataForProductForm(HttpServletRequest req) {
-        CategoryDao categoryDao = PostgreSqlDaoFactory.getInstance().getCategoryDao();
-        ProducerDao producerDao = PostgreSqlDaoFactory.getInstance().getProducerDao();
+        CategoryDao categoryDao = DaoFactory.getDaoFactory().getCategoryDao();
+        ProducerDao producerDao = DaoFactory.getDaoFactory().getProducerDao();
         List<Category> categories = categoryDao.getLeafCategories(
                 (String) req.getSession().getAttribute(AttributeConstants.CURRENT_LANGUAGE_ATTRIBUTE));
         req.getSession().setAttribute(LEAF_CATEGORIES_ATTRIBUTE, categories);
@@ -47,8 +38,14 @@ public final class ActionUtils {
         req.getSession().setAttribute(ALL_PRODUCERS_ATTRIBUTE, producers);
     }
 
+    public static void deleteAttributesFromSessionAfterFinishEdit(HttpServletRequest req) {
+        req.getSession().removeAttribute(PRODUCT_DTO_ATTRIBUTE);
+        req.getSession().removeAttribute(ALL_PRODUCERS_ATTRIBUTE);
+        req.getSession().removeAttribute(LEAF_CATEGORIES_ATTRIBUTE);
+    }
+
     public static void getDataForChangeCategoryForm(HttpServletRequest req, int id) {
-        CategoryDao categoryDao = PostgreSqlDaoFactory.getInstance().getCategoryDao();
+        CategoryDao categoryDao = DaoFactory.getDaoFactory().getCategoryDao();
         List<Category> categories = categoryDao.getAllCategories(
                 (String) req.getSession().getAttribute(AttributeConstants.CURRENT_LANGUAGE_ATTRIBUTE));
         categories = categories.stream()
@@ -58,168 +55,20 @@ public final class ActionUtils {
     }
 
     public static void getDataForAddCategoryForm(HttpServletRequest req) {
-        CategoryDao categoryDao = PostgreSqlDaoFactory.getInstance().getCategoryDao();
+        CategoryDao categoryDao = DaoFactory.getDaoFactory().getCategoryDao();
         List<Category> categories = categoryDao.getAllCategories(
                 (String) req.getSession().getAttribute(AttributeConstants.CURRENT_LANGUAGE_ATTRIBUTE));
         req.getSession().setAttribute(ALL_CATEGORIES_ATTRIBUTE, categories);
     }
 
-    public static boolean validateRequestFromProductForm(HttpServletRequest req, Product editedProduct) throws IOException, ServletException {
-        boolean areAllParametersValid = true;
-        if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(PRODUCT_NAME_PARAMETER)) ||
-                !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(PRODUCT_NAME_PARAMETER), LIMIT_LENGTH_OF_PRODUCT_NAME)) {
-            req.setAttribute(WRONG_NAME_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedProduct.setName(req.getParameter(PRODUCT_NAME_PARAMETER));
-        }
-        if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(DESCRIPTION_PARAMETER)) ||
-                !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(DESCRIPTION_PARAMETER), LIMIT_LENGTH_OF_PRODUCT_DESCRIPTION)) {
-            req.setAttribute(WRONG_DESCRIPTION_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedProduct.setDescription(req.getParameter(DESCRIPTION_PARAMETER));
-        }
-        if (!ValidationUtils.isValidPrice(req.getParameter(PRICE_PARAMETER))) {
-            req.setAttribute(WRONG_PRICE_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            String price = req.getParameter(PRICE_PARAMETER);
-            if (price.contains(",")) {
-                price = price.replace(",",".");
-            }
-            editedProduct.setPrice(new BigDecimal(price));
-        }
-        if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(CATEGORY_PARAMETER))) {
-            int idCategory = Integer.parseInt(req.getParameter(CATEGORY_PARAMETER));
-            List<Category> categories = (List<Category>) req.getSession().getAttribute(LEAF_CATEGORIES_ATTRIBUTE);
-            Category category = categories.stream()
-                    .filter(cat -> cat.getId() == idCategory)
-                    .findAny().orElseThrow(() -> new CategoryNotFoundException("Cannot find category with id = " + idCategory));
-            editedProduct.setCategory(category);
-        }
-        if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(PRODUCER_PARAMETER))) {
-            int idProducer = Integer.parseInt(req.getParameter(PRODUCER_PARAMETER));
-            List<Producer> producers = (List<Producer>) req.getSession().getAttribute(ALL_PRODUCERS_ATTRIBUTE);
-            Producer producer = producers.stream()
-                    .filter(pr -> pr.getId() == idProducer)
-                    .findAny().orElseThrow(() -> new ProducerNotFoundException("Cannot find producer with id = " + idProducer));
-            editedProduct.setProducer(producer);
-        }
-        if (!ValidationUtils.isValidInteger(req.getParameter(COUNT_PARAMETER))) {
-            req.setAttribute(WRONG_COUNT_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedProduct.setCount(Integer.parseInt(req.getParameter(COUNT_PARAMETER)));
-        }
-        if (ValidationUtils.isRequestContainsMultipartContent(req) && ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
-            if (ValidationUtils.isValidImage(req.getPart(IMAGE_PARAMETER))) {
-                String image = transformPartToString(req);
-                editedProduct.setImage(image);
-            } else {
-                req.setAttribute(WRONG_IMAGE_ATTRIBUTE, true);
-                areAllParametersValid = false;
-            }
-        } else {
-            if (editedProduct.getImage() == null) {
-                req.setAttribute(WRONG_EMPTY_IMAGE_ATTRIBUTE, true);
-                areAllParametersValid = false;
-            }
-        }
-        return areAllParametersValid;
-    }
-
-    public static boolean validateRequestFromProducerForm(HttpServletRequest req, Producer editedProducer) throws IOException, ServletException {
-        boolean areAllParametersValid = true;
-        if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(PRODUCER_NAME_PARAMETER)) ||
-                !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(PRODUCER_NAME_PARAMETER), LIMIT_LENGTH_OF_PRODUCER_NAME)) {
-            req.setAttribute(WRONG_NAME_ATTRIBUTE, true);
-            areAllParametersValid = false;
-        } else {
-            editedProducer.setName(req.getParameter(PRODUCER_NAME_PARAMETER));
-        }
-        return areAllParametersValid;
-    }
-    public static boolean validateRequestFromCategoryForm(HttpServletRequest req, Map<Integer, Category> langToCategory,
-                                                          Map<Integer, Boolean> langToWrongName)
-            throws IOException, ServletException {
-        List<Language> languages = (List<Language>) req.getSession().getAttribute(APP_LANGUAGES_ATTRIBUTE);
-        AtomicBoolean areAllParametersValid = new AtomicBoolean(true);
-        if (ValidationUtils.isRequestContainsMultipartContent(req) && ValidationUtils.isImageLoaded(req.getPart(IMAGE_PARAMETER))) {
-            if (ValidationUtils.isValidImage(req.getPart(IMAGE_PARAMETER))) {
-                String image = transformPartToString(req);
-                langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).setImage(image);
-            } else {
-                req.setAttribute(WRONG_IMAGE_ATTRIBUTE, true);
-                areAllParametersValid.set(false);
-            }
-        } else {
-            if (langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).getImage() == null) {
-                req.setAttribute(WRONG_EMPTY_IMAGE_ATTRIBUTE, true);
-                areAllParametersValid.set(false);
-            }
-        }
-        if (!ValidationUtils.isParameterNullOrEmpty(req.getParameter(PARENT_CATEGORY_PARAMETER))) {
-            int idParentCategory = Integer.parseInt(req.getParameter(PARENT_CATEGORY_PARAMETER));
-            langToCategory.get(INDEX_OF_MAP_LANG_TO_CATEGORY_WHERE_STORE_ENTERED_DATA).setParentCategoryId(idParentCategory);
-        }
-        languages.stream()
-                .forEach(lang -> {
-                    if (ValidationUtils.isParameterNullOrEmpty(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId())) ||
-                            !ValidationUtils.isParameterLessThanOrEqual(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId()),
-                                    LIMIT_LENGTH_OF_CATEGORY_NAME)) {
-                        langToWrongName.put(lang.getId(), true);
-                        areAllParametersValid.set(false);
-                    } else {
-                        langToCategory.get(lang.getId()).setName(req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId()));
-                    }
-                });
-
-        return areAllParametersValid.get();
-    }
-
-    private static byte[] readAllBytes(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[BUFFER_LENGTH];
-        int readLen;
-        IOException exception = null;
-        try {
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                while ((readLen = inputStream.read(buffer, 0, BUFFER_LENGTH)) != -1)
-                    outputStream.write(buffer, 0, readLen);
-
-                return outputStream.toByteArray();
-            }
-        } catch (IOException e) {
-            logger.error("Cannot read file", e);
-            exception = e;
-            throw e;
-        } finally {
-            if (exception == null) inputStream.close();
-            else try {
-                inputStream.close();
-            } catch (IOException e) {
-                exception.addSuppressed(e);
-            }
-        }
-    }
-
-    private static String transformPartToString(HttpServletRequest req) throws IOException, ServletException {
-        Part filePart = req.getPart(IMAGE_PARAMETER);
-        InputStream fileContent = filePart.getInputStream();
-        byte[] imageBytes = ActionUtils.readAllBytes(fileContent);
-        return PREFIX_TO_SHOW_IMAGE_ON_HTML_PAGE +
-                Base64.getEncoder().encodeToString(imageBytes);
-    }
-
     public static String serializeShoppingCart(Map<Product, ShoppingCartItem> productsInShoppingCart) {
-        StringBuilder coockieCart = new StringBuilder();
-        productsInShoppingCart.entrySet().stream()
-                .forEach(el -> coockieCart
-                        .append(el.getKey().getId())
-                        .append("-")
-                        .append(el.getValue().getCount())
-                        .append("|"));
-        return String.valueOf(coockieCart);
+        StringBuilder cookieCart = new StringBuilder();
+        productsInShoppingCart.forEach((id, item) -> cookieCart
+                .append(id.getId())
+                .append("-")
+                .append(item.getCount())
+                .append("|"));
+        return String.valueOf(cookieCart);
     }
 
     public static List<Producer> getProducersByProducts(List<Product> products) {
@@ -229,4 +78,106 @@ public final class ActionUtils {
                 .collect(Collectors.toList());
     }
 
+    public static CategoryDto createCategoryDtoFromRequest(HttpServletRequest req) throws IOException, ServletException {
+        List<Language> languages = (List<Language>) req.getSession().getAttribute(APP_LANGUAGES_ATTRIBUTE);
+        CategoryDto categoryDto = new CategoryDto();
+        if (ValidationUtils.isRequestContainsMultipartContent(req)) {
+            categoryDto.setImagePart(req.getPart(IMAGE_PARAMETER));
+        }
+        categoryDto.setParentCategoryId(req.getParameter(PARENT_CATEGORY_PARAMETER));
+        Map<Integer, String> langIdToCategoryName = categoryDto.getLangIdToCategoryName();
+        languages.forEach(lang -> langIdToCategoryName.put(lang.getId(), req.getParameter(CATEGORY_LANG_ID_PARAMETER + lang.getId())));
+        return categoryDto;
+    }
+
+    public static ProductDto createProductDtoFromRequest(HttpServletRequest req) throws IOException, ServletException {
+        ProductDto productDto = new ProductDto();
+        productDto.setName(req.getParameter(PRODUCT_NAME_PARAMETER));
+        productDto.setDescription(req.getParameter(DESCRIPTION_PARAMETER));
+        productDto.setPrice(req.getParameter(PRICE_PARAMETER));
+        productDto.setCategoryId(req.getParameter(CATEGORY_PARAMETER));
+        productDto.setProducerId(req.getParameter(PRODUCER_PARAMETER));
+        productDto.setCount(req.getParameter(COUNT_PARAMETER));
+        if (ValidationUtils.isRequestContainsMultipartContent(req)) {
+            productDto.setImagePart(req.getPart(IMAGE_PARAMETER));
+        }
+        return productDto;
+    }
+
+    public static void setAttributesWhenValidationErrorOnCategoryForm(HttpServletRequest req, CategoryDto categoryDto,
+                                                                      Map<Integer, Set<String>> langToValidationErrorAttributes,
+                                                                      String action) {
+        langToValidationErrorAttributes.get(null).forEach(attr -> req.setAttribute(attr, true));
+        Map<Integer, Boolean> langToWrongName = langToValidationErrorAttributes.entrySet().stream()
+                .filter(entry -> !entry.getValue().isEmpty())
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), true))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
+        req.getSession().setAttribute(CATEGORY_DTO_ATTRIBUTE, categoryDto);
+        req.setAttribute(LANG_TO_WRONG_NAME_ATTRIBUTE, langToWrongName);
+        req.setAttribute(ACTION_ATTRIBUTE, action);
+    }
+
+    public static void setAttributesWhenValidationErrorOnProductForm(HttpServletRequest req, ProductDto productDto,
+                                                                     Set<String> validationErrorAttributes,
+                                                                     String action) {
+        validationErrorAttributes.forEach(attr -> req.setAttribute(attr, true));
+        req.getSession().setAttribute(PRODUCT_DTO_ATTRIBUTE, productDto);
+        req.setAttribute(ACTION_ATTRIBUTE, action);
+    }
+
+    public static void setAttributesWhenValidationErrorOnProducerForm(HttpServletRequest req, String editedProducerName,
+                                                                      Set<String> validationErrorAttributes,
+                                                                      String action) {
+        validationErrorAttributes.forEach(attr -> req.setAttribute(attr, true));
+        req.getSession().setAttribute(EDITED_PRODUCER_NAME_ATTRIBUTE, editedProducerName);
+        req.setAttribute(ACTION_ATTRIBUTE, action);
+    }
+
+    public static Product mapProductDtoToProduct(HttpServletRequest req, ProductDto productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        BigDecimal price = (productDto.getPrice().contains(",")) ?
+                new BigDecimal(productDto.getPrice().replace(",", ".")) :
+                new BigDecimal(productDto.getPrice());
+        product.setPrice(price);
+        int idCategory = Integer.parseInt(productDto.getCategoryId());
+        List<Category> categories = (List<Category>) req.getSession().getAttribute(LEAF_CATEGORIES_ATTRIBUTE);
+        Category category = categories.stream()
+                .filter(cat -> cat.getId() == idCategory)
+                .findAny().orElseThrow(() -> new CategoryNotFoundException("Cannot find category with id = " + idCategory));
+        product.setCategory(category);
+        int idProducer = Integer.parseInt(req.getParameter(PRODUCER_PARAMETER));
+        List<Producer> producers = (List<Producer>) req.getSession().getAttribute(ALL_PRODUCERS_ATTRIBUTE);
+        Producer producer = producers.stream()
+                .filter(pr -> pr.getId() == idProducer)
+                .findAny().orElseThrow(() -> new ProducerNotFoundException("Cannot find producer with id = " + idProducer));
+        product.setProducer(producer);
+        product.setCount(Integer.parseInt(productDto.getCount()));
+        return product;
+    }
+
+    public static RegisterDto createRegisterDtoFromRequest(HttpServletRequest req) {
+        RegisterDto registerDto = new RegisterDto();
+        registerDto.setUsername(req.getParameter(USERNAME_PARAMETER));
+        registerDto.setFirstName(req.getParameter(FIRST_NAME_PARAMETER));
+        registerDto.setLastName(req.getParameter(LAST_NAME_PARAMETER));
+        registerDto.setBirthDate(req.getParameter(BIRTH_DATE_PARAMETER));
+        registerDto.setEmail(req.getParameter(EMAIL_PARAMETER));
+        registerDto.setPhoneNumber(req.getParameter(PHONE_NUMBER_PARAMETER));
+        registerDto.setPassword(req.getParameter(PASSWORD_PARAMETER));
+        registerDto.setConfirmedPassword(req.getParameter(CONFIRMED_PASSWORD_PARAMETER));
+        return registerDto;
+    }
+
+
+    public static Map<Integer, Set<String>> createMapLangToValidationsErrorAttributes(CategoryDto categoryDto) {
+        Map<Integer, Set<String>> langToValidationErrorNames = new HashMap<>();
+        categoryDto.getLangIdToCategoryName().forEach((langId, name) -> langToValidationErrorNames.put(langId, new HashSet<>()));
+        langToValidationErrorNames.put(null, new HashSet<>());
+        return langToValidationErrorNames;
+    }
 }

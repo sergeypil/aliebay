@@ -9,6 +9,8 @@ public interface ProducerDao {
 
     Optional<Producer> getProducerById(int id);
 
+    Optional<Producer> getProducerByName(String name);
+
     List<Producer> getAllProducers();
 
     void saveProducer(Producer producer);

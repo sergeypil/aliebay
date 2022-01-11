@@ -2,6 +2,7 @@ package com.epam.aliebay.filter;
 
 import com.epam.aliebay.dao.impl.ProductDaoImpl;
 import com.epam.aliebay.entity.Product;
+import com.epam.aliebay.exception.ProductNotFoundException;
 import com.epam.aliebay.model.ShoppingCart;
 import com.epam.aliebay.model.ShoppingCartItem;
 import com.epam.aliebay.util.SessionUtils;
@@ -42,11 +43,12 @@ public class AutoRestoreShoppingCartFilter extends AbstractFilter {
         String[] items = value.split("\\|");
         for (String item : items) {
             try {
-            String data[] = item.split("-");
+            String[] data = item.split("-");//Shopping cart oockie consists of pairs product and count separated by -
             int idProduct = Integer.parseInt(data[0]);
             int count = Integer.parseInt(data[1]);
             ProductDaoImpl productDao = new ProductDaoImpl();
-            Product product = productDao.getProductById(idProduct).get();
+            Product product = productDao.getProductById(idProduct).orElseThrow(
+                    () -> new ProductNotFoundException("Cannot find product with id = " + idProduct));
             shoppingCart.getProducts().put(product, new ShoppingCartItem(count, product.getPrice().multiply(BigDecimal.valueOf(count))));
             } catch (RuntimeException e) {
                 LOGGER.error("Cannot add product to ShoppingCart during deserialization: item=" + item, e);

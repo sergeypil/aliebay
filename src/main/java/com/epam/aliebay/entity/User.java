@@ -1,7 +1,6 @@
 package com.epam.aliebay.entity;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 
 public class User {
     private int id;

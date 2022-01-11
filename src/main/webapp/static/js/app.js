@@ -38,7 +38,7 @@ $(function () {
                 $('#tr' + idProduct).remove();
                 $('#total-count').text(data.totalCount);
                 $('#total-cost').text(data.totalCost);
-                if (data.totalCount == 0) {
+                if (data.totalCount === 0) {
                     location.reload();
                 }
             },
@@ -65,11 +65,12 @@ $(function () {
                     id_order_status: id_order_status
                 },
                 success: function (data) {
-                    if (data.idOrderStatus == 4) {
-                        $('#order-status' + id_order).text(data.orderStatus);
-                        $('#order-status' + id_order).removeAttr('href');
-                        $('#order-status' + id_order).removeAttr('data-toggle');
-                        $('#order-status' + id_order).removeClass('dropdown-toggle');
+                    if (data.idOrderStatus === 4) {
+                        var orderStatus = $('#order-status' + id_order);
+                        orderStatus.text(data.orderStatus);
+                        orderStatus.removeAttr('href');
+                        orderStatus.removeAttr('data-toggle');
+                        orderStatus.removeClass('dropdown-toggle');
                     } else {
                         $('#order-status' + id_order).text(data.orderStatus);
                     }

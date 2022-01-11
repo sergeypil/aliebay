@@ -1,7 +1,7 @@
 package com.epam.aliebay.action.impl;
 
 import com.epam.aliebay.action.Action;
-import com.epam.aliebay.dao.PostgreSqlDaoFactory;
+import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.ProductDao;
 import com.epam.aliebay.entity.Producer;
 import com.epam.aliebay.entity.Product;
@@ -21,7 +21,7 @@ import static com.epam.aliebay.constant.JspNameConstants.PRODUCT_DETAIL_JSP;
 import static com.epam.aliebay.constant.RequestParameterNamesConstants.ID_PARAMETER;
 
 public class GetProductByIdAction implements Action {
-    private final ProductDao productDao = PostgreSqlDaoFactory.getInstance().getProductDao();
+    private final ProductDao productDao = DaoFactory.getDaoFactory().getProductDao();
 
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {

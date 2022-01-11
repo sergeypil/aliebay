@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ShoppingCart {
     private Map<Product, ShoppingCartItem> products;
-    private int totalCount = 0;
+    private int totalCount;
     private BigDecimal totalCost = BigDecimal.ZERO;
 
     public ShoppingCart() {
@@ -31,13 +31,12 @@ public class ShoppingCart {
         return totalCount;
     }
     public void refreshStatistics() {
-        totalCost = new BigDecimal(0);
-        totalCount = 0;
-        for (Map.Entry<Product, ShoppingCartItem> entry: products.entrySet()) {
-            totalCost = totalCost.add(entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue().getCount())));
-            totalCount += entry.getValue().getCount();
-        }
-
+        totalCost = products.entrySet().stream()
+                .map(entry -> entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue().getCount())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        totalCount = products.values().stream()
+                .mapToInt(ShoppingCartItem::getCount)
+                .sum();
     }
 
 }
