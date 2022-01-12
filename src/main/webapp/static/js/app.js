@@ -3,8 +3,8 @@ $(function () {
         var idProduct = $(this).data('id-product');
         var count = $('#count-product').val();
         var url = $(this).data('url-add-to-cart');
-        var countAvailable = $(this).data('count-available');
-        if (count > 0 && count <= countAvailable) {
+        var countAvailableToAdd = $(this).data('count-available');
+        if (count > 0 && count <= countAvailableToAdd) {
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -14,6 +14,15 @@ $(function () {
                 },
                 success: function (data) {
                     $('#count-products-cart').text('(' + data.totalCount + ')');
+                    countAvailableToAdd = countAvailableToAdd - count;
+                    if (countAvailableToAdd > 0) {
+                        $('.qty button').data('count-available', countAvailableToAdd);
+                        $('#btn-add').data('count-available', countAvailableToAdd);
+                        $('#count-product').val(1);
+                    }
+                    else {
+                        location.reload();
+                    }
                 },
                 error: function (xhr) {
                     alert('Error');
@@ -150,4 +159,37 @@ $(function () {
             inputPrice.value = inputPrice.value.replace(/\s/g, "");
         }
     }
+
+    // Quantity
+    $('.qty button').on('click', function () {
+        var countAvailable = $(this).data('count-available');
+        var $button = $(this);
+        var oldValue = $button.parent().find('input').val();
+        var btnMinus = $('.btn-minus');
+        var btnPlus = $('.btn-plus');
+        var newValue;
+        if ($button.hasClass('btn-plus')) {
+            if (oldValue < countAvailable) {
+                newValue = parseFloat(oldValue) + 1;
+                btnPlus.show();
+                btnMinus.show();
+            }
+            else {
+                newValue = oldValue;
+                btnPlus.hide();
+                btnMinus.show();
+            }
+        } else {
+            if (oldValue > 1) {
+                newValue = parseFloat(oldValue) - 1;
+                btnPlus.show();
+                btnMinus.show();
+            } else {
+                newValue = 1;
+                btnMinus.hide();
+                btnPlus.show();
+            }
+        }
+        $button.parent().find('input').val(newValue);
+    });
 });

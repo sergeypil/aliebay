@@ -35,7 +35,8 @@
                                             </td>
                                             <td>$<fmt:formatNumber value="${entry.key.price}"/></td>
                                             <td>${entry.value.count}</td>
-                                            <td>$${entry.value.cost}</td>
+                                            <td>$<fmt:formatNumber
+                                                    value="${entry.value.cost}"/></td>
                                             <td>
                                                 <button><i class="fa fa-trash remove-from-cart"
                                                            data-id-product="${entry.key.id}"

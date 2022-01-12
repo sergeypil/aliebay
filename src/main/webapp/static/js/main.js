@@ -91,7 +91,7 @@
     });
     
     
-    // Quantity
+  /*  // Quantity
     $('.qty button').on('click', function () {
         var countAvailable = $(this).data('count-available');
         var $button = $(this);
@@ -122,7 +122,7 @@
             }
         }
         $button.parent().find('input').val(newValue);
-    });
+    });*/
 
 })(jQuery);
 

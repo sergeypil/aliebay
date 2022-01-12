@@ -38,7 +38,6 @@ public class AddProductToCartAction implements Action {
         if(!SessionUtils.isCurrentShoppingCartCreated(req)) {
                 SessionUtils.setCurrentShoppingCart(req, shoppingCart);
             }
-
         Map<Product, ShoppingCartItem> productsInShoppingCart = shoppingCart.getProducts();
         Product product =  productDao.getProductById(idProduct).orElseThrow(
                 () -> new ProductNotFoundException("Cannot find product with id = " + idProduct));

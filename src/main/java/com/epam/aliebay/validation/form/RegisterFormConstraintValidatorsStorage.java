@@ -28,7 +28,7 @@ public class RegisterFormConstraintValidatorsStorage extends AbstractConstraintV
                 new PasswordValidator(registerDto.getPassword(), WRONG_PASSWORD_ATTRIBUTE, attributes),
                 new NotNullOrEmptyValidator(registerDto.getConfirmedPassword(), WRONG_CONFIRMED_PASSWORD_ATTRIBUTE, attributes),
                 new LessThanSymbolsValidator(registerDto.getPassword(), WRONG_CONFIRMED_PASSWORD_ATTRIBUTE, attributes, MAX_LENGTH_PASSWORD),
-                new ConfirmedPasswordValidator(registerDto.getConfirmedPassword(),registerDto.getConfirmedPassword(),
+                new ConfirmedPasswordValidator(registerDto.getPassword(),registerDto.getConfirmedPassword(),
                         WRONG_CONFIRMED_PASSWORD_ATTRIBUTE, attributes));
         return storage;
     }

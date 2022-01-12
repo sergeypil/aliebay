@@ -38,6 +38,8 @@ public class OtherConstants {
     public static final String ERROR_403_MESSAGE = "error.403.message";
     public static final String ERROR_401_TITLE = "error.401.title";
     public static final String ERROR_401_MESSAGE = "error.401.message";
+    public static final String ERROR_400_TITLE_PRODUCT_NOT_ENOUGH = "error.400.title.not.enough";
+    public static final String ERROR_400_MESSAGE_PRODUCT_NOT_ENOUGH = "error.400.message.not.enough";
     public static final int ID_PARENT_OF_HIGHEST_HIERARCHY_CATEGORY = 0;
     public static final String PATH_TO_DEFAULT_IMAGE = "/media/default_image.png";
 }

@@ -77,4 +77,5 @@ public class AttributeConstants {
     public static final String EDITED_PRODUCT_IMAGE_BYTES_ATTRIBUTE = "editedProductImageBytes";
     public static final String REGISTER_DTO_ATTRIBUTE = "registerDto";
     public static final String CHECKOUT_DTO = "checkoutDto";
+    public static final String AVAILABLE_COUNT_TO_ADD_TO_CART = "availableCountToAddToCart";
 }

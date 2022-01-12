@@ -23,25 +23,25 @@
                                         <h4><fmt:message key="producer"/>:</h4>
                                         <a href="${requestScope.hostName}/main/products?id-producer=${requestScope.product.producer.id}">${requestScope.product.producer.name}</a>
                                     </div>
-                                    <c:if test="${requestScope.product.count<=0}">
+                                    <c:if test="${requestScope.availableCountToAddToCart<=0}">
                                         <div class="alert alert-info">
                                             <fmt:message key="product.no.available"/>&nbsp;
                                         </div>
                                     </c:if>
-                                    <c:if test="${requestScope.product.count>0}">
+                                    <c:if test="${requestScope.availableCountToAddToCart>0}">
                                         <div class="quantity">
                                             <h4><fmt:message key="count"/>:</h4>
                                             <div class="qty">
                                                 <button class="btn-minus"><i class="fa fa-minus"></i></button>
                                                 <input id="count-product" type="text" value="1">
-                                                <button class="btn-plus" data-count-available="${requestScope.product.count}">
+                                                <button class="btn-plus" data-count-available="${requestScope.availableCountToAddToCart}">
                                                     <i class="fa fa-plus"></i></button>
                                             </div>
                                         </div>
                                         <div class="action">
-                                            <a class="btn add-to-cart" data-id-product="${requestScope.product.id}"
+                                            <a class="btn add-to-cart" id="btn-add" data-id-product="${requestScope.product.id}"
                                                data-url-add-to-cart="${requestScope.hostName}/main/ajax/add-product-to-cart"
-                                               data-count-available="${requestScope.product.count}">
+                                               data-count-available="${requestScope.availableCountToAddToCart}">
                                                 <i class="fa fa-shopping-cart"></i><fmt:message key="product.add"/></a>
                                         </div>
                                     </c:if>

@@ -6,6 +6,7 @@ import com.epam.aliebay.dao.Interface.ProductDao;
 import com.epam.aliebay.entity.Producer;
 import com.epam.aliebay.entity.Product;
 import com.epam.aliebay.exception.ProductNotFoundException;
+import com.epam.aliebay.model.ShoppingCart;
 import com.epam.aliebay.util.ActionUtils;
 import com.epam.aliebay.util.AppUtils;
 import com.epam.aliebay.util.RoutingUtils;
@@ -33,6 +34,19 @@ public class GetProductByIdAction implements Action {
         req.setAttribute(PRODUCTS_ATTRIBUTE, products);
         List<Producer> producers = ActionUtils.getProducersByProducts(products);
         AppUtils.setProducersToAttributeAsidePanel(req, producers);
+
+        int availableCountToAddToCart = calculateAvailableCountToAddToCart(req, product);
+        req.setAttribute(AVAILABLE_COUNT_TO_ADD_TO_CART, availableCountToAddToCart);
         RoutingUtils.forwardToPage(PRODUCT_DETAIL_JSP, req, resp);
+    }
+
+    private int calculateAvailableCountToAddToCart(HttpServletRequest req, Product product) {
+        if (req.getSession().getAttribute(CURRENT_SHOPPING_CART_ATTRIBUTE) != null) {
+            ShoppingCart shoppingCart = (ShoppingCart)req.getSession().getAttribute(CURRENT_SHOPPING_CART_ATTRIBUTE);
+            if (shoppingCart.getProducts().containsKey(product)) {
+                return  product.getCount() - shoppingCart.getProducts().get(product).getCount();
+            }
+        }
+        return product.getCount();
     }
 }

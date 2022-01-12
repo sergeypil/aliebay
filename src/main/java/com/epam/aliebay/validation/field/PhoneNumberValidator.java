@@ -3,7 +3,7 @@ package com.epam.aliebay.validation.field;
 import java.util.Set;
 
 public class PhoneNumberValidator extends  AbstractValidator implements ConstraintValidator {
-    private static final String PHONE_NUMBER_REGEX = "^[0-9\\-]{1,}[0-9\\-]{3,15}$";
+    private static final String PHONE_NUMBER_REGEX = "^[0-9+]{1,}[0-9\\-]{3,15}$";
 
     public PhoneNumberValidator(String value, String attributeOfError, Set<String> attributes) {
         super(value, attributeOfError, attributes);

@@ -4,6 +4,7 @@ import com.epam.aliebay.constant.AttributeConstants;
 import com.epam.aliebay.dao.DaoFactory;
 import com.epam.aliebay.dao.Interface.CategoryDao;
 import com.epam.aliebay.dao.Interface.ProducerDao;
+import com.epam.aliebay.dao.Interface.ProductDao;
 import com.epam.aliebay.entity.Category;
 import com.epam.aliebay.entity.Language;
 import com.epam.aliebay.entity.Producer;
@@ -13,6 +14,8 @@ import com.epam.aliebay.exception.ProducerNotFoundException;
 import com.epam.aliebay.dto.CategoryDto;
 import com.epam.aliebay.dto.ProductDto;
 import com.epam.aliebay.dto.RegisterDto;
+import com.epam.aliebay.exception.ProductNotFoundException;
+import com.epam.aliebay.model.ShoppingCart;
 import com.epam.aliebay.model.ShoppingCartItem;
 
 import javax.servlet.ServletException;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.epam.aliebay.constant.AttributeConstants.*;
@@ -179,5 +183,18 @@ public final class ActionUtils {
         categoryDto.getLangIdToCategoryName().forEach((langId, name) -> langToValidationErrorNames.put(langId, new HashSet<>()));
         langToValidationErrorNames.put(null, new HashSet<>());
         return langToValidationErrorNames;
+    }
+
+    public static boolean isCountOfProductsInCartMatchesCountInDb(HttpServletRequest req, ProductDao productDao) {
+        AtomicBoolean isMatch = new AtomicBoolean(true);
+        ShoppingCart cart = (ShoppingCart) req.getSession().getAttribute(CURRENT_SHOPPING_CART_ATTRIBUTE);
+        cart.getProducts().forEach(((product, shoppingCartItem) -> {
+            Product productFromDb = productDao.getProductById(product.getId()).orElseThrow(
+                    () -> new ProductNotFoundException("Cannot find product with id = " + product.getId()));
+            if (productFromDb.getCount() < shoppingCartItem.getCount()) {
+                isMatch.set(false);
+            }
+        }));
+        return isMatch.get();
     }
 }

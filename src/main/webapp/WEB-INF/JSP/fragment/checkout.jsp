@@ -12,20 +12,20 @@
                             <div class="billing-address">
                                 <div class="row">
                                     <h2 class="col-md-12"><fmt:message key="checkout.card.info"/></h2>
-                                    <div class="col-md-9">
+                                    <div class="col-md-7">
                                         <label><fmt:message key="checkout.card.number"/>
-                                            <input class="form-control" type="tel" maxlength="16" name="card-number">
+                                            <input class="form-control" type="tel" maxlength="16" name="card-number"
+                                            value="${sessionScope.checkoutDto.cardNumber}">
                                         </label>
-                                        value="${sessionScope.checkoutDto.cardNumber}">
                                         <c:if test="${requestScope.isWrongCardNumber}">
                                             <div class="alert alert-danger"><fmt:message
                                                     key="checkout.error.card.number"/></div>
                                         </c:if>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-5">
                                         <label><fmt:message key="checkout.cvv"/>
                                             <input class="form-control" type="password" name="security-code"
-                                                   maxlength="4">
+                                                   maxlength="4" size="4">
                                         </label>
                                         <c:if test="${requestScope.isWrongSecurityCode}">
                                             <div class="alert alert-danger"><fmt:message
