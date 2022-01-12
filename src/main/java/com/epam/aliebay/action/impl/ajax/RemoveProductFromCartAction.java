@@ -39,7 +39,7 @@ public class RemoveProductFromCartAction implements Action {
                 shoppingCart.refreshStatistics();
                 String cookieCart = ActionUtils.serializeShoppingCart(productsInShoppingCart);
                 SessionUtils.setCurrentShoppingCart(req, shoppingCart);
-                WebUtils.setCookie(SHOPPING_CART_COOCKIE, cookieCart, SHOPPING_CART_COOCKIE_AGE, resp);
+                WebUtils.setCookie(SHOPPING_CART_COOKIE, cookieCart, SHOPPING_CART_COOKIE_AGE, resp);
                 sendResponse(shoppingCart, req, resp);
             }
         }

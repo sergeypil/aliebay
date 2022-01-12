@@ -3,8 +3,8 @@ package com.epam.aliebay.constant;
 public class OtherConstants {
     public static final String LANGUAGE_EN = "en";
     public static final String REFERER_HEADER = "referer";
-    public static final String SHOPPING_CART_COOCKIE = "cart";
-    public static final int SHOPPING_CART_COOCKIE_AGE = 30*24*60;
+    public static final String SHOPPING_CART_COOKIE = "cart";
+    public static final int SHOPPING_CART_COOKIE_AGE = 30*24*60;
     public static final String APPLICATION_JSON = "application/json";
     public static final String TOTAL_COUNT_JSON = "totalCount";
     public static final String TOTAL_COST_JSON = "totalCost";

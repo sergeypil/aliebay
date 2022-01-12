@@ -51,7 +51,7 @@ public class AddProductToCartAction implements Action {
         }
         shoppingCart.refreshStatistics();
         String cookieCart = ActionUtils.serializeShoppingCart(productsInShoppingCart);
-        WebUtils.setCookie(SHOPPING_CART_COOCKIE, String.valueOf(cookieCart), SHOPPING_CART_COOCKIE_AGE, resp);
+        WebUtils.setCookie(SHOPPING_CART_COOKIE, String.valueOf(cookieCart), SHOPPING_CART_COOKIE_AGE, resp);
         sendResponse(shoppingCart, req, resp);
     }
 

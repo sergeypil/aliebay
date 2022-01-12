@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.epam.aliebay.constant.AttributeConstants.CURRENT_SHOPPING_CART_ATTRIBUTE;
-import static com.epam.aliebay.constant.OtherConstants.SHOPPING_CART_COOCKIE;
+import static com.epam.aliebay.constant.OtherConstants.SHOPPING_CART_COOKIE;
 
 public final class SessionUtils {
     public static ShoppingCart getCurrentShoppingCart(HttpServletRequest req) {
@@ -23,11 +23,11 @@ public final class SessionUtils {
     }
 
     public static Cookie findShoppingCartCookie(HttpServletRequest req) {
-        return WebUtils.findCookie(req, SHOPPING_CART_COOCKIE);
+        return WebUtils.findCookie(req, SHOPPING_CART_COOKIE);
     }
 
     public static void clearCurrentShoppingCart(HttpServletRequest req, HttpServletResponse resp) {
         req.getSession().removeAttribute(CURRENT_SHOPPING_CART_ATTRIBUTE);
-        WebUtils.setCookie(SHOPPING_CART_COOCKIE, null, 0, resp);
+        WebUtils.setCookie(SHOPPING_CART_COOKIE, null, 0, resp);
     }
 }

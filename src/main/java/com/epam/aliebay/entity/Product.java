@@ -16,23 +16,6 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String description, String imageLink, BigDecimal price, Category category, Producer producer) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.category = category;
-        this.producer = producer;
-    }
-
-    public Product(Long id, String name, String description, String imageLink, BigDecimal price, Category category, Producer producer) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.category = category;
-        this.producer = producer;
-    }
-
     public Long getId() {
         return id;
     }
@@ -41,19 +24,19 @@ public class Product {
         this.id = id;
     }
 
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public java.lang.String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(java.lang.String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -85,29 +68,16 @@ public class Product {
         return count;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", category=" + category +
-                ", producer=" + producer +
-                ", count=" + count +
-                '}';
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     @Override
