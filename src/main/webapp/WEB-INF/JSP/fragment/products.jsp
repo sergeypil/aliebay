@@ -37,10 +37,10 @@
                                 <div class="product-item">
                                     <div class="product-title">
                                         <a href="${requestScope.hostName}/main/product?id=${product.id}">
-                                            <c:if test="${fn:length(product.name) > 23}">
-                                                ${fn:substring(product.name, 0, 23)}...
+                                            <c:if test="${fn:length(product.name) > 20}">
+                                                ${fn:substring(product.name, 0, 20)}...
                                             </c:if>
-                                            <c:if test="${fn:length(product.name) <= 23}">
+                                            <c:if test="${fn:length(product.name) <= 20}">
                                                 ${product.name}
                                             </c:if>
                                         </a>
@@ -76,7 +76,7 @@
                                                 style="pointer-events: none; opacity: 0.6"
                                             </c:if>>
                                         <a class="page-link"
-                                           href="${requestScope.hostName}/main/products?number-of-page=${requestScope.startPage}&sort=${requestScope.sortParam}&search=${requestScope.searchParam}&id-category=${requestScope.idCategoryParam}&id-producer=${requestScope.idProducerParam}">
+                                           href="${requestScope.hostName}/main/products?number-of-page=1&sort=${requestScope.sortParam}&search=${requestScope.searchParam}&id-category=${requestScope.idCategoryParam}&id-producer=${requestScope.idProducerParam}">
                                             <fmt:message key="start"/>
                                         </a>
                                     </li>

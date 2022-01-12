@@ -154,7 +154,7 @@ public class GetAllProductsAction implements Action {
         } else if (countOfPages - COUNT_OF_PAGES_POSSIBLE_TO_SELECT / 2 <= numberOfPage) {
             return countOfPages - COUNT_OF_PAGES_POSSIBLE_TO_SELECT + 1;
         } else {
-            return numberOfPage - COUNT_OF_PAGES_POSSIBLE_TO_SELECT / 2 - 1;
+            return numberOfPage - COUNT_OF_PAGES_POSSIBLE_TO_SELECT / 2 + 1;
         }
     }
 }
