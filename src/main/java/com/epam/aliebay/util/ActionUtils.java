@@ -30,6 +30,8 @@ import static com.epam.aliebay.constant.AttributeConstants.*;
 import static com.epam.aliebay.constant.RequestParameterNamesConstants.*;
 
 public final class ActionUtils {
+    private static final String PRODUCTS_SPLIT_SYMBOL = "|";
+    private static final String PRODUCT_AND_COUNT_SPLIT_SYMBOL = "-";
 
     public static void getDataForProductForm(HttpServletRequest req) {
         CategoryDao categoryDao = DaoFactory.getDaoFactory().getCategoryDao();
@@ -69,9 +71,9 @@ public final class ActionUtils {
         StringBuilder cookieCart = new StringBuilder();
         productsInShoppingCart.forEach((id, item) -> cookieCart
                 .append(id.getId())
-                .append("-")
+                .append(PRODUCT_AND_COUNT_SPLIT_SYMBOL)
                 .append(item.getCount())
-                .append("|"));
+                .append(PRODUCTS_SPLIT_SYMBOL));
         return String.valueOf(cookieCart);
     }
 

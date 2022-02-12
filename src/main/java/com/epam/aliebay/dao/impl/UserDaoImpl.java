@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl extends AbstractBaseDao implements UserDao {
-    private static final ResultSetHandler<User> userResultSetHandler =
+    private static final ResultSetHandler<User> USER_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getSingleResultSetHandler(ResultSetHandlerFactory.USER_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<User>> usersResultSetHandler =
+    private static final ResultSetHandler<List<User>> USERS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.USER_RESULT_SET_HANDLER);
 
     private static final String SELECT_ALL_USERS_QUERY = "SELECT u.id as user_id, u.username, u.password, u.email, u.role, " +
@@ -42,22 +42,22 @@ public class UserDaoImpl extends AbstractBaseDao implements UserDao {
 
     @Override
     public Optional<User> getUserById(int id, String language) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_ID_QUERY, userResultSetHandler, id, language));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_ID_QUERY, USER_RESULT_SET_HANDLER, id, language));
     }
 
     @Override
     public Optional<User> getUserByUsername(String username, String language) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_USERNAME_QUERY, userResultSetHandler, username, language));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_USERNAME_QUERY, USER_RESULT_SET_HANDLER, username, language));
     }
     
     @Override
     public Optional<User> getUserByEmail(String email, String language) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_EMAIL_QUERY, userResultSetHandler, email, language));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_USER_BY_EMAIL_QUERY, USER_RESULT_SET_HANDLER, email, language));
     }
 
     @Override
     public List<User> getAllUsers(String language) {
-        return JdbcTemplate.select(SELECT_ALL_USERS_QUERY, usersResultSetHandler, language);
+        return JdbcTemplate.select(SELECT_ALL_USERS_QUERY, USERS_RESULT_SET_HANDLER, language);
     }
 
     @Override

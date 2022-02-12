@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProducerDaoImpl extends AbstractBaseDao implements ProducerDao {
-    private static final ResultSetHandler<Producer> producerResultSetHandler =
+    private static final ResultSetHandler<Producer> PRODUCER_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getSingleResultSetHandler(ResultSetHandlerFactory.PRODUCER_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<Producer>> producersResultSetHandler =
+    private static final ResultSetHandler<List<Producer>> PRODUCERS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.PRODUCER_RESULT_SET_HANDLER);
 
     private static final String SELECT_ALL_PRODUCERS_QUERY = "SELECT id AS producer_id, name AS producer_name FROM producer ORDER BY id";
@@ -23,17 +23,17 @@ public class ProducerDaoImpl extends AbstractBaseDao implements ProducerDao {
 
     @Override
     public Optional<Producer> getProducerById(int id) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCER_BY_ID_QUERY, producerResultSetHandler, id));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCER_BY_ID_QUERY, PRODUCER_RESULT_SET_HANDLER, id));
     }
 
     @Override
     public Optional<Producer> getProducerByName(String name) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCER_BY_NAME_QUERY, producerResultSetHandler, name.toLowerCase()));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCER_BY_NAME_QUERY, PRODUCER_RESULT_SET_HANDLER, name.toLowerCase()));
     }
 
     @Override
     public List<Producer> getAllProducers() {
-        return JdbcTemplate.select(SELECT_ALL_PRODUCERS_QUERY, producersResultSetHandler);
+        return JdbcTemplate.select(SELECT_ALL_PRODUCERS_QUERY, PRODUCERS_RESULT_SET_HANDLER);
     }
 
     @Override

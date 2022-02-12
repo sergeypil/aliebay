@@ -10,13 +10,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class OrderDaoImpl extends AbstractBaseDao implements OrderDao {
-    private static final ResultSetHandler<Order> orderResultSetHandler =
+    private static final ResultSetHandler<Order> ORDER_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getSingleResultSetHandler(ResultSetHandlerFactory.ORDER_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<Order>> ordersResultSetHandler =
+    private static final ResultSetHandler<List<Order>> ORDERS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.ORDER_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<OrderItem>> orderItemsResultSetHandler =
+    private static final ResultSetHandler<List<OrderItem>> ORDER_ITEMS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.ORDER_ITEM_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<Long> idResultSetHandler =
+    private static final ResultSetHandler<Long> LONG_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getLongResultSetHandler();
 
     private static final String SELECT_ALL_ORDERS_QUERY = "SELECT o.id AS order_id, o.user_id, o.created, o.cost, o.address, " +
@@ -51,10 +51,10 @@ public class OrderDaoImpl extends AbstractBaseDao implements OrderDao {
 
     @Override
     public Optional<Order> getOrderById(long id, String language) {
-        Order order = Optional.ofNullable(JdbcTemplate.select(SELECT_ORDER_BY_ID_QUERY, orderResultSetHandler, id, language))
+        Order order = Optional.ofNullable(JdbcTemplate.select(SELECT_ORDER_BY_ID_QUERY, ORDER_RESULT_SET_HANDLER, id, language))
                 .orElseThrow(() -> new OrderNotFoundException("Cannot find order with id = " + id));
         List<OrderItem> orderItems = JdbcTemplate.select(SELECT_ALL_ORDER_ITEMS_BY_ID_ORDER_QUERY,
-                orderItemsResultSetHandler, order.getId());
+                ORDER_ITEMS_RESULT_SET_HANDLER, order.getId());
         order.setItems(orderItems);
         return Optional.of(order);
     }
@@ -62,23 +62,23 @@ public class OrderDaoImpl extends AbstractBaseDao implements OrderDao {
     @Override
     public List<Order> getAllOrders(String language) {
         List<Order> orders = JdbcTemplate.select(SELECT_ALL_ORDERS_QUERY,
-                ordersResultSetHandler, language);
+                ORDERS_RESULT_SET_HANDLER, language);
         orders = orders.stream()
                 .distinct()
                 .peek(order -> order.setItems(JdbcTemplate.select(SELECT_ALL_ORDER_ITEMS_BY_ID_ORDER_QUERY,
-                        orderItemsResultSetHandler, order.getId())))
+                        ORDER_ITEMS_RESULT_SET_HANDLER, order.getId())))
                 .collect(Collectors.toList());
         return orders;
     }
 
     @Override
     public List<Order> getOrdersByIdUser(int idUser, String language) {
-        List<Order> orders = JdbcTemplate.select(SELECT_ORDERS_BY_ID_USER_QUERY, ordersResultSetHandler, idUser,
+        List<Order> orders = JdbcTemplate.select(SELECT_ORDERS_BY_ID_USER_QUERY, ORDERS_RESULT_SET_HANDLER, idUser,
                 language);
         orders = orders.stream()
                 .distinct()
                 .peek(order -> order.setItems(JdbcTemplate.select(SELECT_ALL_ORDER_ITEMS_BY_ID_ORDER_QUERY,
-                        orderItemsResultSetHandler, order.getId())))
+                        ORDER_ITEMS_RESULT_SET_HANDLER, order.getId())))
                 .collect(Collectors.toList());
         return orders;
     }
@@ -86,12 +86,12 @@ public class OrderDaoImpl extends AbstractBaseDao implements OrderDao {
     @Override
     public void saveOrder(Order order) {
         doInTransaction(connection -> {
-            long idOrder = JdbcTemplate.executeUpdateInTransactionWithGenKeys(connection, INSERT_ORDER_QUERY, idResultSetHandler,
+            long idOrder = JdbcTemplate.executeUpdateInTransactionWithGenKeys(connection, INSERT_ORDER_QUERY, LONG_RESULT_SET_HANDLER,
                     order.getUserId(), order.getCreated(), order.getStatus().getId(), order.getCost(), order.getAddress());
             order.getItems().stream()
                     .peek(el -> el.setOrderId(idOrder))
                     .forEach(el -> {
-                        JdbcTemplate.executeUpdateInTransactionWithGenKeys(connection, INSERT_ORDER_ITEM_QUERY, idResultSetHandler, el.getOrderId(),
+                        JdbcTemplate.executeUpdateInTransactionWithGenKeys(connection, INSERT_ORDER_ITEM_QUERY, LONG_RESULT_SET_HANDLER, el.getOrderId(),
                                 el.getProduct().getId(), el.getCount(), el.getRetainedProductPrice());
                         JdbcTemplate.executeUpdateInTransaction(connection, UPDATE_PRODUCT_REDUCE_COUNT_QUERY,
                                 el.getCount(), el.getProduct().getId());

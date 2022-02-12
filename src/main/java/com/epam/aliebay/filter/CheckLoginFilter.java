@@ -13,13 +13,13 @@ import static com.epam.aliebay.constant.AttributeConstants.TARGET_PAGE_ATTRIBUTE
 import static com.epam.aliebay.constant.OtherConstants.*;
 
 public class CheckLoginFilter extends AbstractFilter {
+
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpSession session = req.getSession();
         if (session.getAttribute(CURRENT_USER_ATTRIBUTE) == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             session.setAttribute(TARGET_PAGE_ATTRIBUTE, req.getServletPath() + req.getPathInfo());
-            //resp.sendRedirect(LOGIN_PAGE);
             RoutingUtils.forwardToErrorPage(HttpServletResponse.SC_UNAUTHORIZED, ERROR_401_TITLE, ERROR_401_MESSAGE, req, resp);
         }
         else {

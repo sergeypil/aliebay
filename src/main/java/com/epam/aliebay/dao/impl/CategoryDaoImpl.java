@@ -9,9 +9,9 @@ import com.epam.aliebay.dto.CategoryDto;
 import java.util.List;
 
 public class CategoryDaoImpl extends AbstractBaseDao implements CategoryDao {
-    private static final ResultSetHandler<List<Category>> categoriesResultSetHandler =
+    private static final ResultSetHandler<List<Category>> CATEGORIES_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.CATEGORY_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<Integer> idResultSetHandler =
+    private static final ResultSetHandler<Integer> INT_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getIntResultSetHandler();
 
     private static final String SELECT_ALL_CATEGORIES_ALL_LANGUAGES_QUERY = "SELECT c.id AS category_id, cd.name AS " +
@@ -45,33 +45,33 @@ public class CategoryDaoImpl extends AbstractBaseDao implements CategoryDao {
 
     @Override
     public List<Category> getAllCategoriesAllLanguages() {
-        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_ALL_LANGUAGES_QUERY, categoriesResultSetHandler);
+        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_ALL_LANGUAGES_QUERY, CATEGORIES_RESULT_SET_HANDLER);
     }
 
     @Override
     public List<Category> getCategoryByIdAllLanguages(int id) {
-        return JdbcTemplate.select(SELECT_CATEGORY_BY_ID_ALL_LANGUAGES_QUERY, categoriesResultSetHandler, id);
+        return JdbcTemplate.select(SELECT_CATEGORY_BY_ID_ALL_LANGUAGES_QUERY, CATEGORIES_RESULT_SET_HANDLER, id);
     }
 
     public List<Category> getAllCategories(String language) {
-        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_QUERY, categoriesResultSetHandler, language);
+        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_QUERY, CATEGORIES_RESULT_SET_HANDLER, language);
     }
 
     @Override
     public List<Category> getLeafCategories(String language) {
-        return JdbcTemplate.select(SELECT_LEAF_CATEGORIES_QUERY, categoriesResultSetHandler, language);
+        return JdbcTemplate.select(SELECT_LEAF_CATEGORIES_QUERY, CATEGORIES_RESULT_SET_HANDLER, language);
     }
 
     @Override
     public List<Category> getAllCategoriesByParentId(int idParent, String language) {
-        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_BY_PARENT_ID_QUERY, categoriesResultSetHandler, idParent, language);
+        return JdbcTemplate.select(SELECT_ALL_CATEGORIES_BY_PARENT_ID_QUERY, CATEGORIES_RESULT_SET_HANDLER, idParent, language);
     }
 
     @Override
     public void saveCategory(CategoryDto categoryDto, byte[] imageBytes) {
         doInTransaction(connection -> {
             int idCategory = JdbcTemplate.executeUpdateInTransactionWithGenKeys(connection, INSERT_CATEGORY_QUERY,
-                    idResultSetHandler, imageBytes, Integer.parseInt(categoryDto.getParentCategoryId()));
+                    INT_RESULT_SET_HANDLER, imageBytes, Integer.parseInt(categoryDto.getParentCategoryId()));
             categoryDto.getLangIdToCategoryName().forEach((key, value) -> JdbcTemplate.executeUpdateInTransaction(connection, INSERT_CATEGORY_DETAIL_QUERY,
                     idCategory, key, value));
         });

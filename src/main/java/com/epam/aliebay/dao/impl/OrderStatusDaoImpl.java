@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class OrderStatusDaoImpl extends AbstractBaseDao implements OrderStatusDao {
-    private static final ResultSetHandler<OrderStatus> orderStatusResultSetHandler =
+    private static final ResultSetHandler<OrderStatus> ORDER_STATUS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getSingleResultSetHandler(ResultSetHandlerFactory.ORDER_STATUS_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<OrderStatus>> orderStatusesResultSetHandler =
+    private static final ResultSetHandler<List<OrderStatus>> ORDER_STATUSES_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.ORDER_STATUS_RESULT_SET_HANDLER);
 
     private static final String SELECT_ORDER_STATUS_BY_ID_QUERY = "SELECT os.id AS order_status_id, osd.name, os.explanation FROM order_status os " +
@@ -24,12 +24,12 @@ public class OrderStatusDaoImpl extends AbstractBaseDao implements OrderStatusDa
 
     @Override
     public Optional<OrderStatus> getOrderStatusById(int id, String language) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_ORDER_STATUS_BY_ID_QUERY, orderStatusResultSetHandler, id, language));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_ORDER_STATUS_BY_ID_QUERY, ORDER_STATUS_RESULT_SET_HANDLER, id, language));
     }
 
     @Override
     public List<OrderStatus> getAllOrderStatuses(String language) {
-        return JdbcTemplate.select(SELECT_ALL_ORDER_STATUSES_QUERY, orderStatusesResultSetHandler, language);
+        return JdbcTemplate.select(SELECT_ALL_ORDER_STATUSES_QUERY, ORDER_STATUSES_RESULT_SET_HANDLER, language);
     }
 
 }

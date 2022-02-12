@@ -20,6 +20,8 @@ import static com.epam.aliebay.constant.AttributeConstants.SHOPPING_CART_DESERIA
 
 public class AutoRestoreShoppingCartFilter extends AbstractFilter {
     private static final Logger LOGGER = Logger.getLogger(AutoRestoreShoppingCartFilter.class);
+    private static final String PRODUCTS_SPLIT_REGEX = "\\|";
+    private static final String PRODUCT_AND_COUNT_SPLIT_REGEX = "-";
 
     @Override
     public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -40,10 +42,10 @@ public class AutoRestoreShoppingCartFilter extends AbstractFilter {
 
     private ShoppingCart deserializeShoppingCart(String value) {
         ShoppingCart shoppingCart = new ShoppingCart();
-        String[] items = value.split("\\|");
+        String[] items = value.split(PRODUCTS_SPLIT_REGEX);
         for (String item : items) {
             try {
-            String[] data = item.split("-");//Shopping cart oockie consists of pairs product and count separated by -
+            String[] data = item.split(PRODUCT_AND_COUNT_SPLIT_REGEX);
             int idProduct = Integer.parseInt(data[0]);
             int count = Integer.parseInt(data[1]);
             ProductDaoImpl productDao = new ProductDaoImpl();

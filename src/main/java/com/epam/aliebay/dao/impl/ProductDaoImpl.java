@@ -8,11 +8,11 @@ import com.epam.aliebay.util.AppUtils;
 import java.util.*;
 
 public class ProductDaoImpl extends AbstractBaseDao implements ProductDao {
-    private static final ResultSetHandler<Product> productResultSetHandler =
+    private static final ResultSetHandler<Product> PRODUCT_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getSingleResultSetHandler(ResultSetHandlerFactory.PRODUCT_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<List<Product>> productsResultSetHandler =
+    private static final ResultSetHandler<List<Product>> PRODUCTS_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getListResultSetHandler(ResultSetHandlerFactory.PRODUCT_RESULT_SET_HANDLER);
-    private static final ResultSetHandler<Integer> integerResultSetHandler =
+    private static final ResultSetHandler<Integer> INT_RESULT_SET_HANDLER =
             ResultSetHandlerFactory.getIntResultSetHandler();
 
     private static final String SELECT_ALL_PRODUCTS_QUERY = "SELECT p.id AS product_id, p.name, p.description, " +
@@ -82,47 +82,47 @@ public class ProductDaoImpl extends AbstractBaseDao implements ProductDao {
 
     @Override
     public Optional<Product> getProductById(long id) {
-        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCT_BY_ID_QUERY, productResultSetHandler, id));
+        return Optional.ofNullable(JdbcTemplate.select(SELECT_PRODUCT_BY_ID_QUERY, PRODUCT_RESULT_SET_HANDLER, id));
     }
 
     @Override
     public List<Product> getAllProducts(String language) {
-        return JdbcTemplate.select(SELECT_ALL_PRODUCTS_QUERY, productsResultSetHandler, language);
+        return JdbcTemplate.select(SELECT_ALL_PRODUCTS_QUERY, PRODUCTS_RESULT_SET_HANDLER, language);
     }
 
     @Override
     public List<Product> getProductsByCategory(int idCategory) {
-        return JdbcTemplate.select(SELECT_PRODUCTS_BY_CATEGORY_QUERY, productsResultSetHandler, idCategory);
+        return JdbcTemplate.select(SELECT_PRODUCTS_BY_CATEGORY_QUERY, PRODUCTS_RESULT_SET_HANDLER, idCategory);
     }
 
     @Override
     public List<Product> getProductsWithOffsetLimit(int offset, int limit) {
-        return JdbcTemplate.select(SELECT_ALL_PRODUCTS_WITH_OFFSET_LIMIT, productsResultSetHandler, offset, limit);
+        return JdbcTemplate.select(SELECT_ALL_PRODUCTS_WITH_OFFSET_LIMIT, PRODUCTS_RESULT_SET_HANDLER, offset, limit);
     }
 
     @Override
     public List<Product> getProductsWithOffsetLimitOrder(int offset, int limit, String orderParam) {
         String sql = String.format(SELECT_ALL_PRODUCTS_WITH_OFFSET_LIMIT_ORDER, orderParam);
-        return JdbcTemplate.select(sql, productsResultSetHandler, offset, limit);
+        return JdbcTemplate.select(sql, PRODUCTS_RESULT_SET_HANDLER, offset, limit);
     }
 
     @Override
     public List<Product> getProductsWithOffsetLimitOrderSearch(int offset, int limit, String orderParam, String searchParam) {
         String sql = String.format(SELECT_ALL_PRODUCTS_WITH_OFFSET_LIMIT_ORDER_SEARCH, searchParam, orderParam);
-        return JdbcTemplate.select(sql, productsResultSetHandler, offset, limit);
+        return JdbcTemplate.select(sql, PRODUCTS_RESULT_SET_HANDLER, offset, limit);
     }
 
     @Override
     public List<Product> getProductsByCategoryWithOffsetLimitOrder(int offset, int limit, String orderParam, int idCategory) {
         String sql = String.format(SELECT_PRODUCTS_BY_CATEGORY_WITH_OFFSET_LIMIT_ORDER_QUERY, orderParam);
-        return JdbcTemplate.select(sql, productsResultSetHandler,
+        return JdbcTemplate.select(sql, PRODUCTS_RESULT_SET_HANDLER,
                 idCategory, offset, limit);
     }
 
     @Override
     public List<Product> getProductsByProducerWithOffsetLimitOrder(int offset, int limit, String orderParam, int idProducer) {
         String sql = String.format(SELECT_PRODUCTS_BY_PRODUCER_WITH_OFFSET_LIMIT_ORDER_QUERY, orderParam);
-        return JdbcTemplate.select(sql, productsResultSetHandler,
+        return JdbcTemplate.select(sql, PRODUCTS_RESULT_SET_HANDLER,
                 idProducer, offset, limit);
     }
 
@@ -148,22 +148,22 @@ public class ProductDaoImpl extends AbstractBaseDao implements ProductDao {
     }
 
     public int getCountOfProducts() {
-        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_QUERY, integerResultSetHandler);
+        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_QUERY, INT_RESULT_SET_HANDLER);
     }
 
     @Override
     public int getCountOfProductsWithSearch(String searchParam) {
         String sql = String.format(SELECT_COUNT_OF_PRODUCTS_WITH_SEARCH_QUERY, searchParam);
-        return JdbcTemplate.select(sql, integerResultSetHandler);
+        return JdbcTemplate.select(sql, INT_RESULT_SET_HANDLER);
     }
 
     @Override
     public int getCountOfProductsByCategory(int idCategory) {
-        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_BY_CATEGORY, integerResultSetHandler, idCategory);
+        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_BY_CATEGORY, INT_RESULT_SET_HANDLER, idCategory);
     }
 
     @Override
     public int getCountOfProductsByProducer(int idProducer) {
-        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_BY_PRODUCER, integerResultSetHandler, idProducer);
+        return JdbcTemplate.select(SELECT_COUNT_OF_PRODUCTS_BY_PRODUCER, INT_RESULT_SET_HANDLER, idProducer);
     }
 }
