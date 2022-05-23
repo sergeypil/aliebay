@@ -13,19 +13,4 @@ public class AbstractValidator {
         this.attributeOfError = attributeOfError;
         this.attributes = attributes;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractValidator)) return false;
-        AbstractValidator that = (AbstractValidator) o;
-        return Objects.equals(value, that.value) &&
-                Objects.equals(attributeOfError, that.attributeOfError) &&
-                Objects.equals(attributes, that.attributes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, attributeOfError, attributes);
-    }
 }
